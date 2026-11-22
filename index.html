@@ -314,6 +314,11 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .thanks__id{margin-top:10px;font-weight:800;color:var(--ink)}
 
 /* окремі сторінки */
+.about-points{display:grid;gap:12px;margin:6px 0 4px;max-width:62ch}
+.about-points li{position:relative;padding-left:28px;color:var(--muted);font-size:clamp(15px,1.15vw,17px)}
+.about-points li::before{content:"";position:absolute;left:0;top:.3em;width:18px;height:18px;border-radius:50%;background:var(--orange-soft)}
+.about-points li::after{content:"";position:absolute;left:6px;top:calc(.3em + 4px);width:5px;height:9px;border:solid var(--orange-hi);border-width:0 2.2px 2.2px 0;transform:rotate(45deg)}
+.about-points b{color:var(--ink);font-weight:800}
 .page{min-height:60vh}
 .page > .wrap{position:relative;z-index:1}
 .page__back{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px 0 12px;margin-bottom:clamp(20px,3vw,36px);border-radius:999px;background:var(--mint);font-weight:800;font-size:15px;text-decoration:none}
@@ -761,12 +766,16 @@ main > section > .wrap, .footer > .wrap{position:relative;z-index:1}
       </div>
       <div>
         <p class="kicker">Про нас</p>
-        <h1 class="h2 page__title" id="pro-nas-title">Ми шиємо для дітей і родин.<br><em>Тепер і ковдри.</em></h1>
-        <p class="lead">Дюшес — українська швейна студія. Ви знаєте нас за дитячими спальниками й подушками. Ковдри ми шиємо в тій самій майстерні, тими самими руками й з тією ж увагою до кожного шва.</p>
-        <p class="lead">Стьобка тримає наповнювач рівно по всій площі, тож ковдра не збивається в грудки після прання. Колір обираєте ви, а розмір і якість однакові для всіх чотирьох.</p>
+        <h1 class="h2 page__title" id="pro-nas-title">Українське виробництво <em>затишних ковдр</em></h1>
+        <p class="lead">Виготовляємо легкі, теплі та довговічні ковдри для вашої спальні. Працюємо напряму з клієнтами по всій Україні — від розкрою тканини до відправки у зручному пакуванні.</p>
+        <ul class="about-points">
+          <li><b>100% контроль якості</b> — перевіряємо кожен стібок та окантовку перед відправкою.</li>
+          <li><b>Гіпоалергенні матеріали</b> — безпечна мікрофібра та дихаючий наповнювач шерстепон.</li>
+          <li><b>Швидка відправка</b> — усі популярні розміри та кольори в наявності на складі.</li>
+        </ul>
         <ul class="factlist">
           <li><strong>4</strong><span>кольори на вибір</span></li>
-          <li><strong data-fact-size></strong><span>розмір ковдри, см</span></li>
+          <li><strong>3 розміри</strong><span>поширена розмірна сітка</span></li>
           <li><strong>14 днів</strong><span>на обмін або повернення</span></li>
         </ul>
       </div>
@@ -874,7 +883,7 @@ const CONFIG = {
   care: ['Власне виробництво', 'Стьобка по всій площі', 'Однакова якість у всіх кольорах'],
   // Фото: покладіть файли в папку img/ і впишіть назви. Відео — mp4 до ~8 МБ.
   hero:  { photo: '', video: '' },   // напр. { photo:'img/stos.jpg', video:'img/hero.mp4' }
-  about: { photo: '', video: '' },
+  about: { photo: 'img/violet-1.jpg', video: '' },
   contacts: {
     phone: '+38 (0XX) XXX XX XX',    // ← телефон
     email: '',                       // ← пошта
@@ -952,7 +961,7 @@ const FAQ = [
   /* ---------- static content from CONFIG ---------- */
   $('[data-hero-price]').textContent = money(CONFIG.price);
   $('[data-hero-ship]').hidden = !promoOn();
-  $('[data-fact-size]').textContent = CONFIG.size || 'скоро';
+  { const fs = $('[data-fact-size]'); if (fs) fs.textContent = CONFIG.size || 'скоро'; }
   $('[data-spec]').innerHTML = CONFIG.spec.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd class="${v ? '' : 'tbc'}">${v ? esc(v) : 'уточнюється'}</dd></div>`).join('');
   $('[data-care-chips]').innerHTML = CONFIG.care.map(t => `<li>${esc(t)}</li>`).join('');
   $('[data-colors-lead]').textContent = `Кожна ковдра однакового розміру й якості. Відрізняється лише колір. Ціна для всіх ${money(CONFIG.price)}.`;
