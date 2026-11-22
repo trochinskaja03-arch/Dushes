@@ -1,0 +1,9 @@
+# Потрібен лише якщо публікуєте через командний рядок (npx wrangler deploy).
+# Через сайт Cloudflare цей файл не потрібен — див. ІНСТРУКЦІЯ.md.
+name = "dushes-pay"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+SITE_URL = "https://YOUR-NAME.github.io/dushes"
+# Секрети додаються окремо: npx wrangler secret put MONO_TOKEN (і так само для інших)
