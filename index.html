@@ -87,6 +87,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .nav a:hover{color:var(--orange)}
 .cartbtn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border:0;border-radius:999px;background:var(--mint);font-weight:800;cursor:pointer;white-space:nowrap}
 .cartbtn:hover{background:var(--mint-deep)}
+.cartbtn__sum{font-variant-numeric:tabular-nums;font-weight:800}
 .cartbtn b{display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 6px;border-radius:999px;background:var(--orange);color:#fff;font-size:13px;font-variant-numeric:tabular-nums}
 .burger{display:none;width:44px;height:44px;border:0;background:none;cursor:pointer;flex-direction:column;justify-content:center;gap:6px;padding:0 10px}
 .burger span{display:block;height:2px;border-radius:2px;background:var(--ink);transition:transform .2s var(--ease)}
@@ -162,7 +163,20 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .color__media{position:relative;aspect-ratio:3/4;max-width:100%;background:var(--mint);display:grid;place-items:center;overflow:hidden}
 .color__media svg{width:84%;height:auto}
 .color__media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.gal__img{opacity:0;transition:opacity .45s var(--ease)}
+.gal__img{opacity:0;transition:opacity .45s var(--ease),transform .35s var(--ease);will-change:transform}
+.gal.is-zoom .gal__img{transform:scale(2.2);transition:opacity .45s var(--ease),transform .2s ease-out}
+@media (hover:hover) and (pointer:fine){ .gal{cursor:zoom-in} }
+.gal__arrow{position:absolute;top:50%;z-index:3;width:40px;height:40px;margin-top:-20px;border:0;border-radius:50%;padding:0;cursor:pointer;
+  display:grid;place-items:center;background:rgba(255,255,255,.88);color:var(--ink);box-shadow:0 6px 16px -8px rgba(30,42,45,.45);
+  transition:opacity .2s var(--ease),background .2s var(--ease),transform .2s var(--ease)}
+.gal__arrow svg{width:20px;height:20px}
+.gal__arrow:hover{background:#fff;color:var(--orange-hi);transform:scale(1.06)}
+.gal__arrow--prev{left:10px}
+.gal__arrow--next{right:10px}
+@media (hover:hover) and (pointer:fine){
+  .gal__arrow{opacity:0}
+  .color:hover .gal__arrow,.gal__arrow:focus-visible{opacity:1}
+}
 .gal__img.is-on{opacity:1}
 .gal__dots{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:4px;z-index:2;padding:4px 6px;border-radius:999px;background:rgba(255,255,255,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .gal__dots button{width:24px;height:24px;border:0;padding:0;background:transparent;cursor:pointer;display:grid;place-items:center}
@@ -177,16 +191,134 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .color__price{font-weight:800;font-size:18px;font-variant-numeric:tabular-nums}
 .color__price span{font-size:13px;color:var(--muted);font-weight:700;margin-left:6px}
 .color .btn{min-height:48px;font-size:15px}
+.sizes{display:grid;gap:6px}
+.size{appearance:none;-webkit-appearance:none;font:inherit;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 12px;min-height:44px;cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2px 8px;min-width:0;line-height:1.15;text-align:left;transition:border-color .2s var(--ease),background .2s var(--ease);-webkit-tap-highlight-color:transparent}
+.size b{font-size:14px;font-weight:800}
+.size span{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.size:hover{border-color:#D8CFC7}
+.size[aria-checked="true"]{border-color:var(--ink)}
+.size[aria-checked="true"] span{color:var(--ink)}
+.size.in-cart{border-color:var(--orange);background:#FFF6F1}
+.sizes.need .size{border-color:var(--orange);animation:needsz .45s var(--ease)}
+@keyframes needsz{0%,100%{transform:none}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.size:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.color__help{appearance:none;-webkit-appearance:none;background:none;border:0;padding:2px 0;font:inherit;font-size:13.5px;font-weight:700;color:var(--orange-hi);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;cursor:pointer;align-self:flex-start;text-align:left}
+.color .size,.color .color__help{position:relative;z-index:3}
+@media (max-width:600px){.color .buy{flex-direction:column;align-items:stretch;gap:4px}.color .trash{width:auto;height:30px;border:0;border-radius:999px;background:transparent;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:700;font-size:13px}.color .trash svg{width:16px;height:16px}.color .trash i{display:inline}.color .stepper{min-height:44px}.color .stepper button{width:34px!important;height:34px!important}.color .size{flex-direction:column;align-items:flex-start;justify-content:center}.color .stepper i{display:none}.color .stepper button{width:38px;height:38px}.color .stepper span{font-size:17px}.color .size span{white-space:normal}.size{padding:7px 10px;min-height:48px}.size b{font-size:13px}.size span{font-size:12px}.color__help{font-size:13px}}
+/* кнопка кошика з кількістю (як у Purrfect) */
+.buy{min-height:48px;display:flex;align-items:center;gap:8px}
+.buy > .btn{flex:1}
+.stepper{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;min-height:48px;border-radius:999px;background:var(--orange);color:#fff;padding:4px;box-shadow:0 10px 24px -14px rgba(238,90,27,.8)}
+.stepper button{width:40px;height:40px;flex:none;border:0;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font:800 22px/1 system-ui,sans-serif;cursor:pointer;display:grid;place-items:center;-webkit-tap-highlight-color:transparent;transition:background .2s var(--ease)}
+.stepper button:hover{background:rgba(255,255,255,.32)}
+.stepper button:disabled,.qty button:disabled{opacity:.4;cursor:not-allowed}
+.stepper button:focus-visible{outline:3px solid #fff;outline-offset:1px}
+.stepper i{font-style:normal}
+.trash{flex:none;width:48px;height:48px;border-radius:50%;border:2px solid var(--line);background:#fff;color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;transition:border-color .2s var(--ease),color .2s var(--ease),background .2s var(--ease);-webkit-tap-highlight-color:transparent}
+.trash svg{width:20px;height:20px}
+.trash i{display:none;font-style:normal}
+.color .stepper i{display:none}
+.color .stepper span{font-size:17px}
+.trash:hover{border-color:var(--err);color:var(--err);background:#FFF4F2}
+.trash:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.trash--sm{width:36px;height:36px;border-width:0;background:transparent}
+.trash--sm svg{width:18px;height:18px}
+.stepper span{font-weight:800;font-size:15px;text-align:center;white-space:nowrap;font-variant-numeric:tabular-nums;padding:0 4px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.color__media[data-open]{cursor:pointer}
+.gal.is-zoom{cursor:zoom-in}
+.pd__media .gal{cursor:default}
+.color h3 a{color:inherit;text-decoration:none}
+.color h3 a:hover{color:var(--orange-hi)}
+.color__more{font-size:13.5px;font-weight:800;color:var(--ink);text-decoration:none;align-self:flex-start}
+.color__more:hover{color:var(--orange-hi)}
+/* сторінка товару */
+.pd{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(22px,4vw,56px);align-items:start}
+.pd__media{position:sticky;top:96px}
+.pd__media .color__media{border-radius:28px}
+.pd__thumbs{display:flex;gap:10px;margin-top:12px}
+.pd__thumbs button{width:72px;aspect-ratio:3/4;border-radius:14px;overflow:hidden;border:2px solid transparent;padding:0;background:var(--mint);cursor:pointer}
+.pd__thumbs button[aria-pressed="true"]{border-color:var(--orange)}
+.pd__thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.pd__info{display:flex;flex-direction:column;gap:14px;min-width:0}
+.pd__info .kicker{margin:0}
+.pd__title{font-size:clamp(26px,3.2vw,40px);line-height:1.12}
+.pd__sub{color:var(--muted);font-weight:700;font-size:15px;margin-top:-4px}
+.pd__colors{display:flex;flex-wrap:wrap;gap:8px}
+.pd__colors a{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px 0 8px;border-radius:999px;border:2px solid var(--line);text-decoration:none;font-weight:700;font-size:14px;color:var(--ink);background:#fff}
+.pd__color{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px 0 8px;border-radius:999px;border:2px solid var(--orange);background:#FFF6F1;font-weight:700;font-size:14px}
+.pd__colors .dot{width:20px;height:20px}
+.pd__short{font-size:16px;line-height:1.6;color:var(--ink)}
+.pd__label{font-weight:800;font-size:14px;margin-bottom:-6px}
+.pd__price{font:800 clamp(26px,2.6vw,32px)/1 var(--display);font-variant-numeric:tabular-nums}
+.pd__sum span{font:700 14px/1 system-ui,sans-serif;color:var(--muted);margin-left:10px}
+.pd__price small{font:700 14px/1.3 system-ui,sans-serif;color:var(--orange-hi);display:block;margin-top:6px}
+.pd__buy{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pd__buy .buy > .btn,.pd__buy > .btn{min-height:52px}
+.pd__hint{font-size:13.5px;color:var(--muted)}
+.pd__benefits{list-style:none;margin:0;padding:18px;border-radius:20px;background:var(--mint);display:grid;gap:10px}
+.pd__benefits li{position:relative;padding-left:30px;font-size:15px;line-height:1.5}
+.pd__benefits li::before{content:"";position:absolute;left:0;top:2px;width:20px;height:20px;border-radius:50%;background:var(--orange) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12 4 4 8-8'/%3E%3C/svg%3E") center/14px no-repeat}
+.pd__specs{width:100%;border-collapse:collapse;font-size:14.5px;background:#fff;border-radius:20px;overflow:hidden;box-shadow:inset 0 0 0 2px var(--line)}
+.pd__specs th,.pd__specs td{text-align:left;vertical-align:top;padding:12px 16px;border-top:1px solid var(--line)}
+.pd__specs tr:first-child th,.pd__specs tr:first-child td{border-top:0}
+.pd__specs th{width:42%;font-weight:800;color:var(--muted)}
+.pd__h{font-size:clamp(22px,2.4vw,28px);margin:clamp(34px,5vw,60px) 0 18px}
+.pd__order{margin-top:8px}
+@media (max-width:860px){
+  .pd{grid-template-columns:1fr}
+  .pd__media{position:static}
+  .pd__buy{grid-template-columns:1fr}
+  .pd__specs th,.pd__specs td{display:block;width:auto;padding:4px 14px}
+  .pd__specs th{padding-top:12px;border-top:1px solid var(--line)}
+  .pd__specs td{border-top:0;padding-bottom:12px}
+}
+.size-note{margin-top:14px;text-align:center;font-size:14px;color:var(--muted)}
+/* вікно консультації */
+.consult{border:0;padding:0;border-radius:24px;width:min(440px,calc(100vw - 24px));max-height:calc(100dvh - 24px);background:#fff;color:var(--ink);box-shadow:0 30px 80px rgba(30,42,45,.25)}
+.consult::backdrop{background:rgba(30,42,45,.45)}
+.consult__in{padding:26px 22px 22px;position:relative;outline:none}
+.consult h3{font-size:22px;margin:0 34px 6px 0;line-height:1.2}
+.consult__sub{color:var(--muted);font-size:14.5px;margin-bottom:14px}
+.consult__sizes{list-style:none;margin:0 0 16px;padding:12px 14px;background:#FAF7F4;border-radius:14px;font-size:13.5px;display:grid;gap:4px}
+.consult__sizes b{font-weight:800}
+.consult__x{position:absolute;top:12px;right:12px;width:40px;height:40px;border:0;border-radius:50%;background:#F4F1EE;color:var(--ink);font-size:22px;line-height:1;cursor:pointer}
+.consult .field{margin-bottom:12px}
 
 /* 7. комплекти */
 .foot-note{margin-top:18px;text-align:center;font-size:14px;color:var(--muted)}
 
 /* 7. акція */
 .promo{background:linear-gradient(180deg,#FFFFFF 0%,#FFF6F1 100%)}
+#materialy{padding-bottom:clamp(20px,2.5vw,32px)}
+.promo{padding-top:clamp(56px,5vw,72px)}
 .promo__grid{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:stretch}
 .promo__main{position:relative;overflow:hidden;background:var(--orange);color:#fff;border-radius:32px;padding:clamp(26px,4vw,48px);display:flex;flex-direction:column;align-items:flex-start;gap:18px;min-width:0}
 .promo__main::after{content:"";position:absolute;right:-60px;bottom:-60px;width:260px;height:260px;border-radius:50%;
   background:repeating-linear-gradient(45deg,rgba(255,255,255,.16) 0 2px,transparent 2px 14px);pointer-events:none}
+.promo__cta{position:relative;z-index:1;display:flex;align-items:flex-end;gap:clamp(18px,3vw,36px)}
+.pdrop{position:relative;width:64px;height:106px;flex:none;margin-bottom:-4px}
+.pdrop__pear{position:absolute;left:0;bottom:6px;width:64px;height:auto;transform-origin:50% 0;filter:drop-shadow(0 0 1px rgba(255,255,255,.9)) drop-shadow(0 2px 6px rgba(120,30,0,.25))}
+.pdrop__shadow{position:absolute;left:50%;bottom:0;width:54px;height:10px;margin-left:-27px;border-radius:50%;background:radial-gradient(closest-side,rgba(90,20,0,.45),rgba(90,20,0,0))}
+.pdrop.is-ready .pdrop__pear{transform:translateY(-520px) rotate(-18deg);opacity:0}
+.pdrop.is-ready .pdrop__shadow{transform:scale(.2);opacity:0}
+.pdrop.is-drop .pdrop__pear{animation:pdrop 1.25s cubic-bezier(.33,0,.66,0) both}
+.pdrop.is-drop .pdrop__shadow{animation:pshadow 1.25s ease-in both}
+@keyframes pdrop{
+  0%{transform:translateY(-520px) rotate(-18deg);opacity:0}
+  8%{opacity:1}
+  62%{transform:translateY(0) rotate(4deg);animation-timing-function:cubic-bezier(.2,.7,.4,1)}
+  74%{transform:translateY(-26px) rotate(-3deg);animation-timing-function:cubic-bezier(.5,0,.8,.4)}
+  84%{transform:translateY(0) rotate(2deg);animation-timing-function:cubic-bezier(.2,.7,.4,1)}
+  91%{transform:translateY(-7px) rotate(-1deg)}
+  100%{transform:translateY(0) rotate(0);opacity:1}}
+@keyframes pshadow{
+  0%{transform:scale(.15);opacity:0}
+  62%{transform:scale(1.1);opacity:1}
+  74%{transform:scale(.75);opacity:.6}
+  84%{transform:scale(1.05);opacity:1}
+  91%{transform:scale(.92);opacity:.85}
+  100%{transform:scale(1);opacity:1}}
+@media (max-width:700px){.pdrop{width:44px;height:74px}.pdrop__pear{width:44px}.pdrop__shadow{width:36px;margin-left:-18px}}
 .promo__kicker{font-weight:800;font-size:13px;letter-spacing:.14em;text-transform:uppercase;background:rgba(255,255,255,.18);padding:7px 14px;border-radius:999px}
 .promo__title{font-size:clamp(30px,4.2vw,50px);font-weight:800;line-height:1.08}
 .promo__title em{font-style:normal;display:block;color:#FFE2D3}
@@ -198,8 +330,14 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .btn--light{background:#fff;color:var(--orange-hi);position:relative;z-index:1}
 .btn--light:hover{background:#FFE9DE;color:var(--orange-hi)}
 .gift{position:relative;background:#fff;border:2px dashed #F3B596;border-radius:32px;padding:clamp(24px,3vw,36px);display:flex;flex-direction:column;gap:12px;min-width:0}
-.gift__bow{width:56px;height:36px;color:var(--orange)}
-.gift h3{font-size:clamp(20px,2vw,24px);font-weight:700}
+.xmas{position:absolute;top:-62px;right:-24px;width:118px;height:auto;pointer-events:none;z-index:2;filter:drop-shadow(0 8px 10px rgba(80,20,10,.18));transform:rotate(-30deg)}
+@media (max-width:700px){.xmas{width:84px;right:-8px;top:-40px}}
+.gift{text-align:center;justify-content:center}
+.gift h3{font-size:clamp(20px,2vw,24px);font-weight:700;padding-inline:24px}
+.gift .field label{text-align:center}
+.gift .field input{text-align:center}
+.gift .formerror{text-align:center}
+@media (max-width:700px){.gift h3{padding-inline:48px}}
 .gift > p{color:var(--muted);font-size:15px}
 .gift form{margin-top:6px}
 .gift__done{text-align:center;padding:18px 0}
@@ -238,6 +376,38 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .review figcaption{font-size:14px;font-weight:800;color:var(--muted)}
 
 /* 11. FAQ */
+.faqsec{position:relative;overflow:hidden;padding-block:clamp(36px,5vw,64px);isolation:isolate;background:linear-gradient(180deg,#F4E9E3 0%,#FBF5F1 100%)}
+.faqsec__bg{position:absolute;inset:0;z-index:-1;overflow:hidden;background:#F4E9E3}
+/* розмита копія кадру заповнює краї, а саме відео показуємо цілим (ліжко видно повністю) */
+.faqsec__bg::before{content:"";position:absolute;inset:-40px;background:url("img/faq-bg.jpg") center/cover no-repeat;filter:blur(28px) saturate(1.05);opacity:.9}
+.faqsec__bg video{position:absolute;z-index:1;left:50%;top:50%;transform:translate(-50%,-50%);height:100%;width:auto;aspect-ratio:3/2;max-width:none;object-fit:cover;display:block;background:url("img/faq-bg.jpg") center/cover no-repeat;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 9%,#000 91%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 9%,#000 91%,transparent 100%)}
+.faqsec__bg::after{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(180deg,rgba(255,250,246,.35) 0%,rgba(255,250,246,.08) 40%,rgba(255,250,246,.08) 70%,rgba(255,250,246,.3) 100%)}
+.faqsec .wrap{position:relative}
+.faqsec .kicker{display:table;margin:0 auto 14px;background:var(--orange);color:#fff;padding:7px 14px;border-radius:999px;letter-spacing:.12em;box-shadow:0 10px 24px -12px rgba(238,90,27,.8)}
+.faqsec .h2{display:table;margin:0 auto;padding:10px 26px 12px;border-radius:22px;background:rgba(255,255,255,.45);-webkit-backdrop-filter:blur(4px) saturate(1.1);backdrop-filter:blur(4px) saturate(1.1);box-shadow:0 14px 40px -24px rgba(30,42,45,.45)}
+.faqsec .h2 em{font-style:normal;color:var(--orange)}
+.faqsec .faq{margin-top:22px;border-top:0;display:grid;gap:10px;counter-reset:q}
+.faqsec .faq details{counter-increment:q;border:1px solid rgba(255,255,255,.85);border-radius:20px;background:rgba(255,255,255,.36);-webkit-backdrop-filter:blur(4px) saturate(1.1);backdrop-filter:blur(4px) saturate(1.1);box-shadow:0 12px 32px -22px rgba(30,42,45,.5);transition:background .25s var(--ease)}
+.faqsec .faq details:hover{background:rgba(255,255,255,.5)}
+.faqsec .faq details[open]{background:rgba(255,255,255,.78)}
+.faqsec .faq summary{text-shadow:0 0 8px rgba(255,255,255,.9),0 0 2px rgba(255,255,255,.9);display:flex;align-items:center;gap:14px;padding:16px 62px 16px 16px;color:var(--ink);font-size:17px;line-height:1.35}
+.faqsec .faq summary::before{content:counter(q,decimal-leading-zero);flex:none;font:800 13px/1 var(--display);color:var(--orange-hi);background:#FFF1EA;border-radius:999px;padding:8px 9px;min-width:36px;text-align:center}
+.faqsec .faq summary::after{right:16px;width:32px;height:32px;border:0;border-radius:50%;transform:translateY(-50%);background:var(--orange) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center/16px no-repeat;transition:transform .25s var(--ease)}
+.faqsec .faq details[open] summary::after{transform:translateY(-50%) rotate(180deg)}
+.faqsec .faq__a{color:var(--ink);padding:0 20px 18px 66px;max-width:none}
+@media (max-width:760px){
+  /* на телефоні відео не розтягуємо на всю висоту блоку (інакше сильний зум) — показуємо його цілим угорі */
+  .faqsec__bg{inset:0 0 auto 0;height:auto;aspect-ratio:3/2;overflow:visible}
+  .faqsec__bg::before{display:none}
+  .faqsec__bg video{width:100%;height:100%;-webkit-mask-image:none;mask-image:none}
+  .faqsec__bg::after{background:linear-gradient(180deg,rgba(255,250,246,.15) 0%,rgba(255,250,246,0) 45%,#F7EEE9 100%)}
+  .faqsec .h2{padding:8px 18px 10px}
+  .faqsec .faq summary{font-size:15.5px;padding:14px 54px 14px 12px;gap:10px}
+  .faqsec .faq summary::before{min-width:32px;padding:7px 7px;font-size:12px}
+  .faqsec .faq summary::after{right:12px;width:30px;height:30px}
+  .faqsec .faq__a{padding:0 16px 16px 16px}
+}
 .faq{margin-top:26px;border-top:2px solid var(--line)}
 .faq details{border-bottom:1px solid var(--line)}
 .faq summary{list-style:none;cursor:pointer;position:relative;padding:18px 40px 18px 0;font-weight:800;font-size:17px}
@@ -255,9 +425,27 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .order__cart{position:sticky;top:92px}
 .panel h3{font-size:20px;font-weight:700;padding-bottom:14px;margin-bottom:16px;border-bottom:2px solid var(--line)}
 .cartlist{display:grid;gap:12px}
+.drawer{position:fixed;inset:0;z-index:70}
+.drawer__scrim{position:absolute;inset:0;background:rgba(30,42,45,.42);opacity:0;transition:opacity .28s var(--ease)}
+.drawer__panel{position:absolute;top:0;right:0;bottom:0;width:min(440px,100%);background:#fff;display:flex;flex-direction:column;box-shadow:-24px 0 60px -20px rgba(30,42,45,.35);transform:translateX(100%);transition:transform .28s var(--ease);outline:none;padding-bottom:env(safe-area-inset-bottom,0px)}
+.drawer.is-open .drawer__scrim{opacity:1}
+.drawer.is-open .drawer__panel{transform:none}
+.drawer__head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 22px;border-bottom:1px solid var(--line)}
+.drawer__head h2{font-size:22px;display:flex;align-items:center;gap:10px}
+.drawer__count{display:inline-grid;place-items:center;min-width:28px;height:28px;padding:0 8px;border-radius:999px;background:var(--orange);color:#fff;font:800 14px/1 system-ui,sans-serif}
+.drawer__x{width:42px;height:42px;border:0;border-radius:50%;background:#F4F1EE;font-size:24px;line-height:1;cursor:pointer;color:var(--ink)}
+.drawer__body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 22px}
+.drawer__foot{padding:16px 22px 22px;border-top:1px solid var(--line);background:#FFFCFA}
+.drawer__foot .totals{margin:0 0 16px}
+.drawer__foot .btn{min-height:54px}
+.drawer__more{display:block;width:100%;margin-top:10px;padding:10px;border:0;background:none;font:inherit;font-weight:800;font-size:14px;color:var(--muted);cursor:pointer}
+.drawer__more:hover{color:var(--ink)}
+.drawer .citem{grid-template-columns:52px 1fr auto auto}
+@media (max-width:420px){.drawer .citem{grid-template-columns:48px 1fr auto;row-gap:8px}.drawer .citem .qty{grid-column:2;justify-self:start}.drawer .citem .trash{grid-column:3;grid-row:2}}
+@media (prefers-reduced-motion:reduce){.drawer__panel,.drawer__scrim{transition:none}}
 .cartlist__empty{color:var(--muted);font-size:15px}
 .cartlist__empty a{color:var(--orange-hi);font-weight:800}
-.citem{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.citem{display:grid;grid-template-columns:52px 1fr auto auto;gap:10px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .citem__sw{width:52px;height:52px;border-radius:14px;box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.1);overflow:hidden}
 .citem__sw img{width:100%;height:100%;object-fit:cover}
 .citem__name{font-weight:800;font-size:15px}
@@ -285,6 +473,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .field input:disabled{background:#F4F6F5;color:#9AA6A8}
 .field input.is-error{border-color:var(--err)}
 .hint{margin-top:6px;font-size:13px;color:var(--muted)}
+.hint a{color:var(--orange-hi)}
+.row3{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px}
+.upcheck{margin-top:8px;padding:10px 12px;border-radius:12px;background:#EEF8F1;color:#1E6B3A;font-size:14px;font-weight:700}
+.upcheck.is-bad{background:#FFF1EE;color:var(--err)}
 .radios{display:flex;flex-wrap:wrap;gap:8px}
 .radio{position:relative}
 .radio input{position:absolute;opacity:0;width:1px;height:1px;min-height:0;padding:0;border:0}
@@ -302,6 +494,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .suggest li:last-child{border-bottom:0}
 .suggest li:hover,.suggest li.is-active{background:var(--orange-soft)}
 .suggest li.empty{cursor:default;color:var(--muted)}
+.suggest li.note{font-size:13px;background:#FAF7F4;position:sticky;bottom:0}
+.suggest li span{color:var(--muted);font-size:13px}
+@media (max-width:420px){.row3{gap:8px}.row3 label{font-size:13px}}
 .formerror{margin-bottom:14px;padding:12px 14px;border-radius:12px;background:#FCEBEA;color:var(--err);font-weight:700;font-size:15px}
 .formnote{margin-top:12px;font-size:13px;color:var(--muted)}
 .secure{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;color:var(--muted);font-weight:700}
@@ -325,6 +520,20 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .page__back:hover{background:var(--mint-deep)}
 .page__back svg{width:18px;height:18px}
 .page__title{font-size:clamp(30px,4.2vw,48px)}
+.legal{max-width:820px}
+.legal .page__title{margin-bottom:10px}
+.legal__sub{font-weight:700;font-size:17px;margin-bottom:6px}
+.legal__date{color:var(--muted);font-size:14px;margin-bottom:24px}
+.legal h2{font-size:clamp(19px,2vw,22px);margin:30px 0 10px}
+.legal p,.legal li{font-size:15.5px;line-height:1.65;margin-bottom:8px}
+.legal ul{padding-left:20px;margin:0 0 10px}
+.legal a{color:var(--orange-hi)}
+.legal__req{list-style:none;padding:18px 20px!important;background:var(--mint);border-radius:18px}
+.legal__todo{background:#FFE8DC;color:var(--orange-hi);border-radius:6px;padding:0 6px;font-weight:700}
+.footer__docs{display:flex;flex-wrap:wrap;gap:6px 18px}
+.footer__docs a{text-decoration:none;font-weight:700}
+.footer__docs a:hover{color:var(--orange-hi)}
+.formnote a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 .page__cta{margin-top:clamp(28px,4vw,48px);display:flex;justify-content:center}
 .coop{margin-top:30px}
 .coop__contact{margin-top:28px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px 28px;padding:clamp(22px,3vw,34px);border-radius:26px;background:var(--mint)}
@@ -413,8 +622,13 @@ main > section > .wrap, .footer > .wrap{position:relative;z-index:1}
   .logo img{width:124px}
   .cartbtn{padding:0 14px}
   .cartbtn .lbl{display:none}
+  .cartbtn__sum{font-size:14px}
 }
 @media (max-width:480px){
+  .gal__arrow{width:30px;height:30px;margin-top:-15px;background:rgba(255,255,255,.75)}
+  .gal__arrow svg{width:16px;height:16px}
+  .gal__arrow--prev{left:6px}
+  .gal__arrow--next{right:6px}
   .countdown{gap:6px}
   .countdown div{border-radius:14px;padding:10px 2px}
   .countdown span{font-size:10px;letter-spacing:.02em}
@@ -567,15 +781,21 @@ main > section > .wrap, .footer > .wrap{position:relative;z-index:1}
           <div><b data-cd="m">00</b><span data-cdl="m">хвилин</span></div>
           <div><b data-cd="s">00</b><span data-cdl="s">секунд</span></div>
         </div>
-        <a class="btn btn--light" href="#kolory">Обрати ковдру
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
+        <div class="promo__cta">
+          <a class="btn btn--light" href="#kolory">Обрати ковдру
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <div class="pdrop" data-pdrop aria-hidden="true">
+            <span class="pdrop__shadow"></span>
+            <img class="pdrop__pear" src="img/pear-drop.png" alt="" width="128" height="200" decoding="async">
+          </div>
+        </div>
       </div>
 
       <div class="gift">
-        <svg class="gift__bow" viewBox="0 0 64 40" aria-hidden="true"><path d="M32 22C24 8 8 4 8 16c0 8 14 8 24 6Zm0 0c8-14 24-18 24-6 0 8-14 8-24 6Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M32 22 22 38M32 22l10 16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+        <img class="xmas" src="img/xmas.png" alt="" width="306" height="326" decoding="async">
         <h3>Обери свою ковдру</h3>
-        <p>Залиште номер, і ми нагадаємо за 3 дні до кінця акції, щоб ви встигли замовити з безкоштовною доставкою.</p>
+        <p>Залиште свій номер, і ми допоможемо вам обрати потрібну ковдру.</p>
         <form id="lead-form" novalidate>
           <div class="field">
             <label for="l-name">Ім'я</label>
@@ -586,13 +806,13 @@ main > section > .wrap, .footer > .wrap{position:relative;z-index:1}
             <input id="l-phone" name="lphone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+380 XX XXX XX XX">
           </div>
           <p class="formerror" data-lead-error hidden></p>
-          <button class="btn wide" type="submit" data-lead-submit>Нагадайте мені</button>
-          <p class="formnote">Тільки одне нагадування про акцію, без розсилок.</p>
+          <button class="btn wide" type="submit" data-lead-submit>Допоможіть мені обрати</button>
+          <p class="formnote">Надсилаючи номер, ви погоджуєтесь з <a href="#pryvatnist">політикою конфіденційності</a>.</p>
         </form>
         <div class="gift__done" data-lead-done hidden>
           <p class="gift__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></p>
-          <h3>Готово, нагадаємо!</h3>
-          <p>Напишемо вам до 28 грудня. А якщо вже знаєте колір, можна замовити й зараз.</p>
+          <h3>Дякуємо, заявку прийнято!</h3>
+          <p>Скоро зателефонуємо й допоможемо обрати ковдру. А якщо вже знаєте колір, можна замовити й зараз.</p>
         </div>
       </div>
     </div>
@@ -669,7 +889,7 @@ main > section > .wrap, .footer > .wrap{position:relative;z-index:1}
               <label class="radio"><input type="radio" id="d-np" name="delivery" value="np-branch" checked><span>Відділення НП</span></label>
               <label class="radio"><input type="radio" id="d-npp" name="delivery" value="np-locker"><span>Поштомат НП</span></label>
               <label class="radio"><input type="radio" id="d-npc" name="delivery" value="np-courier"><span>Кур'єр НП</span></label>
-              <label class="radio"><input type="radio" id="d-up" name="delivery" value="ukrposhta"><span>Укрпошта</span></label>
+              <label class="radio"><input type="radio" id="d-up" name="delivery" value="ukrposhta"><span>Відділення Укрпошти</span></label>
             </div>
           </fieldset>
 
@@ -682,21 +902,32 @@ main > section > .wrap, .footer > .wrap{position:relative;z-index:1}
 
           <div class="field" data-branch-field>
             <label for="f-branch">Відділення або поштомат <i>*</i></label>
-            <input id="f-branch" name="branch" type="text" autocomplete="off" placeholder="Спершу оберіть місто" disabled
+            <input id="f-branch" name="branch" type="text" autocomplete="off" placeholder="Номер або вулиця, напр. 12"
                    role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="branch-list">
             <ul class="suggest" id="branch-list" role="listbox" hidden></ul>
             <p class="hint" data-np-hint hidden>Не знайшли в списку? Впишіть номер відділення вручну.</p>
           </div>
 
-          <div class="row2" data-address-field hidden>
+          <div data-address-field hidden>
             <div class="field">
-              <label for="f-address">Адреса <i>*</i></label>
-              <input id="f-address" name="address" type="text" autocomplete="street-address" placeholder="вул. Шевченка, 10, кв. 5">
+              <label for="f-street">Вулиця <i>*</i></label>
+              <input id="f-street" name="street" type="text" autocomplete="off" placeholder="Почніть вводити назву вулиці"
+                     role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="street-list">
+              <ul class="suggest" id="street-list" role="listbox" hidden></ul>
             </div>
-            <div class="field" data-zip-field hidden>
-              <label for="f-zip">Індекс <i>*</i></label>
-              <input id="f-zip" name="zip" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="01001" maxlength="5">
+            <div class="row3">
+              <div class="field"><label for="f-house">Будинок <i>*</i></label><input id="f-house" name="house" type="text" autocomplete="off" placeholder="10" maxlength="12"></div>
+              <div class="field"><label for="f-flat">Квартира</label><input id="f-flat" name="flat" type="text" autocomplete="off" placeholder="5" maxlength="10"></div>
+              <div class="field"><label for="f-floor">Поверх</label><input id="f-floor" name="floor" type="text" inputmode="numeric" autocomplete="off" placeholder="3" maxlength="3"></div>
             </div>
+          </div>
+
+          <div class="field" data-zip-field hidden>
+            <label for="f-zip">Індекс відділення Укрпошти <i>*</i></label>
+            <input id="f-zip" name="zip" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="Напр. 01001" maxlength="5">
+            <ul class="suggest" id="zip-list" role="listbox" hidden></ul>
+            <p class="upcheck" data-up-result hidden></p>
+            <p class="hint">Оберіть відділення зі списку після вибору міста або впишіть індекс. Не знаєте його? <a href="https://index.ukrposhta.ua/" target="_blank" rel="noopener">Пошук індексу на сайті Укрпошти</a></p>
           </div>
 
           <fieldset class="field">
@@ -712,7 +943,7 @@ main > section > .wrap, .footer > .wrap{position:relative;z-index:1}
 
           <div class="field">
             <label for="f-comment">Коментар</label>
-            <textarea id="f-comment" name="comment" rows="3" placeholder="Побажання, зручний час дзвінка"></textarea>
+            <textarea id="f-comment" name="comment" rows="3" placeholder="Ваш точний розмір (напр. 150×210), побажання, зручний час дзвінка"></textarea>
           </div>
 
           <p class="formerror" data-form-error hidden></p>
@@ -720,7 +951,7 @@ main > section > .wrap, .footer > .wrap{position:relative;z-index:1}
             <span data-submit-label>Перейти до оплати</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </button>
-          <p class="formnote">Натискаючи кнопку, ви погоджуєтесь на обробку персональних даних для доставки замовлення.</p>
+          <p class="formnote">Натискаючи кнопку, ви приймаєте умови <a href="#oferta">публічної оферти</a> та погоджуєтесь з <a href="#pryvatnist">політикою конфіденційності</a>.</p>
         </form>
 
         <div class="thanks" data-thanks hidden>
@@ -735,10 +966,13 @@ main > section > .wrap, .footer > .wrap{position:relative;z-index:1}
 </section>
 
 <!-- ============ 11. ПИТАННЯ ============ -->
-<section class="section" id="pytannia">
+<section class="section faqsec" id="pytannia">
+  <div class="faqsec__bg" aria-hidden="true">
+    <video muted loop playsinline preload="none" poster="img/faq-bg.jpg" data-bgvideo data-src="img/faq-bg.mp4" data-src-m="img/faq-bg-m.mp4"></video>
+  </div>
   <div class="wrap narrow">
     <p class="kicker center">Питання</p>
-    <h2 class="h2 center">Коротко про важливе</h2>
+    <h2 class="h2 center">Коротко про <em>важливе</em></h2>
     <div class="faq" data-faq></div>
   </div>
 </section>
@@ -829,6 +1063,221 @@ main > section > .wrap, .footer > .wrap{position:relative;z-index:1}
   </div>
 </section>
 
+<section class="page section" id="tovar" hidden aria-labelledby="pd-title">
+  <div class="wrap">
+    <a class="page__back" href="#kolory">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+      До всіх ковдр
+    </a>
+    <div data-pd></div>
+  </div>
+</section>
+
+<section class="page section" id="oferta" hidden aria-labelledby="oferta-title">
+  <div class="wrap legal">
+    <a class="page__back" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+      На головну
+    </a>
+    <p class="kicker">Документи</p>
+    <h1 class="page__title" id="oferta-title">Договір публічної оферти</h1>
+    <p class="legal__sub">про купівлю-продаж товарів дистанційним способом</p>
+    <p class="legal__date">м. <span data-legal="city"></span> · Редакція дійсна з <span data-legal="date"></span></p>
+
+    <p>Цей договір є офіційною та публічною пропозицією Продавця укласти договір купівлі-продажу Товару, представленого на вебсайті <span data-legal="site"></span>. Цей договір є публічним, тобто відповідно до статті 633 Цивільного кодексу України, його умови є однаковими для всіх покупців незалежно від їх статусу (фізична особа, юридична особа, фізична особа-підприємець) без надання переваги одному покупцю перед іншим. Шляхом укладення цього Договору покупець у повному обсязі приймає умови та порядок оформлення замовлення, оплати товару, доставки товару, повернення товару, відповідальності за недобросовісне замовлення та усі інші умови договору. Договір вважається укладеним з моменту натискання кнопки «Підтвердити замовлення» (або «Оформити замовлення») на сторінці оформлення замовлення в Інтернет-магазині та отримання Покупцем від Продавця підтвердження замовлення в електронному вигляді або за телефоном.</p>
+
+    <h2>1. Визначення термінів</h2>
+    <p>1.1. Публічна оферта (далі – «Оферта») — публічна пропозиція Продавця, адресована невизначеному колу осіб, укласти з Продавцем договір купівлі-продажу товару дистанційним способом на умовах, що містяться в цій Оферті.</p>
+    <p>1.2. Товар — об’єкт угоди сторін, який був обраний покупцем на сайті Інтернет-магазину та поміщений у кошик, або вже придбаний Покупцем у Продавця дистанційним способом (зокрема, постільні приналежності, ковдри, домашній текстиль).</p>
+    <p>1.3. Інтернет-магазин — сайт Продавця за адресою <span data-legal="site"></span>, створений для укладення договорів роздрібної та оптової купівлі-продажу на підставі ознайомлення Покупця із запропонованим Продавцем описом Товару за допомогою мережі Інтернет.</p>
+    <p>1.4. Покупець — дієздатна фізична особа, яка досягла 18 років, отримує інформацію від Продавця, розміщує замовлення щодо купівлі товару, який представлений на сайті Інтернет-магазину для цілей, не пов’язаних зі здійсненням підприємницької діяльності, або юридична особа чи фізична особа-підприємець.</p>
+    <p>1.5. Продавець — <span data-legal="seller"></span>, ідентифікаційний код <span data-legal="ipn"></span>, юридична адреса: <span data-legal="address"></span>, що діє відповідно до законодавства України.</p>
+
+    <h2>2. Предмет Договору</h2>
+    <p>2.1. Продавець зобов’язується передати у власність Покупця Товар, а Покупець зобов’язується оплатити і прийняти Товар на умовах цього Договору.</p>
+    <p>2.2. Датою укладення Договору-оферти (акцептом оферти) та моментом повного й беззаперечного прийняття Покупцем умов Договору вважається дата заповнення Покупцем форми замовлення, розташованої на сайті Інтернет-магазину, за умови отримання Покупцем від Продавця підтвердження замовлення.</p>
+
+    <h2>3. Оформлення Замовлення</h2>
+    <p>3.1. Покупець самостійно оформлює замовлення в Інтернет-магазині через форму замовлення, або зробивши замовлення електронною поштою, у месенджерах чи за номером телефону, вказаним у розділі контактів Інтернет-магазину.</p>
+    <p>3.2. Продавець має право відмовитися від передачі замовлення Покупцеві у випадку, якщо відомості, вказані Покупцем під час оформлення замовлення, є неповними або викликають підозру щодо їх дійсності.</p>
+    <p>3.3. При оформленні замовлення на сайті Інтернет-магазину Покупець зобов’язується надати наступну обов’язкову інформацію, необхідну Продавцю для виконання замовлення:</p>
+    <ul>
+      <li>прізвище, ім’я Покупця;</li>
+      <li>адреса, за якою слід доставити Товар (або номер відділення/поштомату служби доставки);</li>
+      <li>контактний телефон;</li>
+      <li>обрані характеристики Товару (розмір, колір, кількість).</li>
+    </ul>
+    <p>3.4. Найменування, кількість, розмір, колір та ціна обраного Покупцем Товару вказуються в кошику Покупця на сайті Інтернет-магазину або фіксуються при підтвердженні замовлення менеджером.</p>
+    <p>3.5. Якщо будь-якій зі Сторін договору необхідна додаткова інформація, вона має право запросити її в іншої Сторони. У разі ненадання необхідної інформації Покупцем, Продавець не несе відповідальності за надання якісної послуги Покупцю при покупці товару в інтернет-магазині.</p>
+    <p>3.6. Прийняття Покупцем умов цієї Оферти здійснюється за допомогою внесення Покупцем відповідних даних в реєстраційну форму на сайті Інтернет-магазину або при оформленні Замовлення через оператора. Покупець несе відповідальність за достовірність наданої інформації при оформленні Замовлення.</p>
+
+    <h2>4. Ціна і Доставка Товару</h2>
+    <p>4.1. Ціни на Товари визначаються Продавцем самостійно та вказані на сайті Інтернет-магазину. Всі ціни на Товари вказані на сайті у гривнях.</p>
+    <p>4.2. Ціни на Товари можуть змінюватися Продавцем в односторонньому порядку залежно від кон’юнктури ринку. При цьому ціна окремої одиниці Товару, вартість якої оплачена Покупцем у повному обсязі (або зафіксована при підтвердженні замовлення з післяплатою), не може бути змінена Продавцем в односторонньому порядку.</p>
+    <p>4.3. Вартість Товару, яка вказана на сайті Інтернет-магазину, не включає в себе вартість доставки Товару Покупцю. Вартість доставки Товару Покупець сплачує відповідно до діючих тарифів служб доставки («Нова Пошта», «Укрпошта» тощо) безпосередньо обраній службі доставки при отриманні, якщо інше не зазначено в умовах акції на сайті.</p>
+    <p>4.4. Зобов’язання Покупця по оплаті Товару вважаються виконаними з моменту надходження коштів на розрахунковий рахунок Продавця або з моменту оплати Товару при отриманні у відділенні служби доставки (накладений платіж).</p>
+    <p>4.5. Розрахунки між Продавцем і Покупцем за Товар здійснюються способами, зазначеними на сайті Інтернет-магазину в розділі «Оплата і Доставка».</p>
+    <p>4.6. При отриманні товару Покупець повинен у присутності представника служби доставки (перевізника) перевірити відповідність Товару якісним і кількісним характеристикам (найменування товару, кількість, комплектність, цілісність пакування та відсутність виробничих дефектів).</p>
+    <p>4.7. Покупець або його представник під час приймання Товару підтверджує своїм підписом у товарно-транспортній накладній або квитанції служби доставки, що не має претензій до кількості товару, зовнішнього вигляду і комплектності товару.</p>
+    <p>4.8. Право власності та ризик випадкової втрати або пошкодження Товару переходить до Покупця або його Представника з моменту отримання Товару Покупцем у місті поставки Товару при самостійній доставці Товару від Продавця, чи під час передачі Продавцем товару службі доставки обраній Покупцем.</p>
+
+    <h2>5. Права та обов’язки Сторін</h2>
+    <p>5.1. Продавець зобов’язаний:</p>
+    <ul>
+      <li>передати Покупцеві товар у відповідності до умов цього Договору та замовлення Покупця;</li>
+      <li>не розголошувати будь-яку приватну інформацію про Покупця і не надавати доступ до цієї інформації третім особам, за винятком випадків, передбачених законодавством України та необхідних для виконання замовлення (передача даних службам доставки);</li>
+      <li>надати Покупцю достовірну інформацію про характеристики, склад та правила догляду за Товаром.</li>
+    </ul>
+    <p>5.2. Продавець має право:</p>
+    <ul>
+      <li>змінювати умови цього Договору, а також ціни на Товари в односторонньому порядку, розміщуючи їх на сайті Інтернет-магазину. Всі зміни набувають чинності з моменту їх публікації;</li>
+      <li>призупинити надання послуг за цим Договором у разі виникнення технічних несправностей або форс-мажорних обставин.</li>
+    </ul>
+    <p>5.3. Покупець зобов’язується:</p>
+    <ul>
+      <li>до моменту укладення Договору ознайомитися зі змістом Договору, умовами оплати і доставки на сайті Інтернет-магазину;</li>
+      <li>надати достовірну інформацію про себе (ПІБ, контактні телефони, адресу доставки) необхідну для доставки Товару;</li>
+      <li>прийняти Товар, доставлений службою доставки у зазначений термін, та оплатити його.</li>
+    </ul>
+
+    <h2>6. Повернення Товару та коштів</h2>
+    <p>6.1. Покупець має право на повернення Продавцеві непродовольчого товару належної якості, якщо товар не задовольнив його за формою, габаритами, фасоном, кольором, розміром або з інших причин не може бути ним використаний за призначенням. Покупець має право на повернення товару належної якості протягом 14 (чотирнадцяти) календарних днів, не враховуючи дня купівлі.</p>
+    <p>6.2. Повернення товару належної якості проводиться, якщо він не використовувався і якщо збережено його товарний вигляд, споживчі властивості, упаковка, пломби, ярлики (бірки), а також розрахунковий документ, виданий Покупцю за оплату Товару.</p>
+    <p>6.3. Примітка щодо переліку товарів, що не підлягають обміну (поверненню): Відповідно до Постанови Кабінету Міністрів України № 172 від 19.03.1994 р., пір’яно-пухові вироби та постільна білизна належної якості не підлягають обміну (поверненню) після порушення цілісності пакування або початку експлуатації. Продавець іде назустріч Покупцям та здійснює обмін/повернення ковдр належної якості виключно за умови збереження їх первісного фабричного вигляду, відсутності сторонніх запахів, плям, пошкоджень та збереження оригінального пакування.</p>
+    <p>6.4. Повернення Покупцеві вартості товару належної якості здійснюється протягом 7 (семи) робочих днів з моменту отримання такого Товару Продавцем за умови дотримання вимог, передбачених п. 6.2 та 6.3 Договору.</p>
+    <p>6.5. Вартість товару підлягає поверненню шляхом банківського переказу на рахунок Покупця (IBAN / картковий рахунок), наданий Покупцем у заяві на повернення.</p>
+    <p>6.6. Повернення Товару належної якості за адресою Продавця здійснюється за рахунок Покупця та Продавцем Покупцеві не відшкодовується.</p>
+    <p>6.7. У разі виявлення протягом встановленого гарантійного строку недоліків у Товарі (виробничого браку), Покупець особисто, в порядку та у строки, що встановлені законодавством України, має право пред’явити Продавцеві вимоги, передбачені Законом України «Про захист прав споживачів». При цьому витрати на зворотну доставку товару неналежної якості бере на себе Продавець.</p>
+
+    <h2>7. Відповідальність</h2>
+    <p>7.1. Продавець не несе відповідальності за шкоду, заподіяну Покупцеві або третім особам внаслідок неналежного використання або порушення правил догляду за Товарами, придбаними у Продавця (зокрема, недотримання температурного режиму прання та сушіння).</p>
+    <p>7.2. Продавець не несе відповідальності за неналежне, несвоєчасне виконання Замовлень і своїх зобов’язань у випадку надання Покупцем недостовірної або помилкової інформації.</p>
+    <p>7.3. Продавець і Покупець несуть відповідальність за виконання своїх зобов’язань відповідно до чинного законодавства України і положень цього Договору.</p>
+    <p>7.4. Продавець або Покупець звільняються від відповідальності за повне або часткове невиконання своїх зобов’язань, якщо невиконання є наслідком форс-мажорних обставин як: війна або військові дії, землетрус, повінь, пожежа та інші стихійні лиха, що виникли незалежно від волі Продавця і/або Покупця після укладення цього договору. Сторона, яка не може виконати свої зобов’язання, негайно повідомляє про це іншу Сторону.</p>
+
+    <h2>8. Конфіденційність і захист персональних даних</h2>
+    <p>8.1. Надаючи свої персональні дані на сайті Інтернет-магазину при реєстрації або оформленні Замовлення, Покупець надає Продавцеві свою добровільну згоду на обробку, використання (у тому числі і передачу) своїх персональних даних, а також вчинення інших дій, передбачених Законом України «Про захист персональних даних», без обмеження терміну дії такої згоди.</p>
+    <p>8.2. Продавець зобов’язується не розголошувати отриману від Покупця інформацію. Не вважається порушенням надання Продавцем інформації контрагентам (службам доставки, платіжним системам) і третім особам, що діють на підставі договору з Продавцем, в тому числі і для виконання зобов’язань перед Покупцем, а також у випадках, коли розкриття такої інформації встановлено вимогами чинного законодавства України.</p>
+    <p>8.3. Покупець несе відповідальність за підтримання своїх персональних даних в актуальному стані. Продавець не несе відповідальності за неякісне виконання або невиконання своїх зобов’язань у зв’язку з неактуальністю інформації про Покупця або невідповідністю її дійсності.</p>
+
+    <h2>9. Інші умови</h2>
+    <p>9.1. Цей договір укладено на території України і діє відповідно до чинного законодавства України.</p>
+    <p>9.2. Усі спори, що виникають між Покупцем і Продавцем, вирішуються шляхом переговорів. У випадку недосягнення врегулювання спірного питання шляхом переговорів, Покупець та/або Продавець мають право звернутися за вирішенням спору до судових органів відповідно до чинного законодавства України.</p>
+    <p>9.3. Продавець має право вносити зміни до цього Договору в односторонньому порядку, передбаченому п. 5.2. Договору. Крім того, зміни до Договору також можуть бути внесені за взаємною згодою Сторін в порядку, передбаченому чинним законодавством України.</p>
+
+    <h2>10. Адреса та реквізити Продавця</h2>
+    <ul class="legal__req">
+      <li><b>Продавець:</b> <span data-legal="seller"></span></li>
+      <li><b>ІПН / ЄДРПОУ:</b> <span data-legal="ipn"></span></li>
+      <li><b>Юридична / поштова адреса:</b> <span data-legal="address"></span></li>
+      <li><b>Поточний рахунок (IBAN):</b> <span data-legal="iban"></span></li>
+      <li><b>Назва банку:</b> <span data-legal="bank"></span></li>
+      <li><b>Телефон:</b> <span data-legal="phone"></span></li>
+      <li><b>E-mail:</b> <span data-legal="email"></span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="page section" id="pryvatnist" hidden aria-labelledby="pryvatnist-title">
+  <div class="wrap legal">
+    <a class="page__back" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+      На головну
+    </a>
+    <p class="kicker">Документи</p>
+    <h1 class="page__title" id="pryvatnist-title">Політика конфіденційності</h1>
+    <p class="legal__date">Редакція дійсна з <span data-legal="date"></span></p>
+
+    <p>Ця Політика конфіденційності визначає, як інтернет-магазин «Дюшес» (Продавець — <span data-legal="seller"></span>, РНОКПП / ЄДРПОУ <span data-legal="ipn"></span>) збирає, використовує, зберігає та захищає персональні дані користувачів сайту <span data-legal="site"></span>. Політика розроблена відповідно до Закону України «Про захист персональних даних».</p>
+
+    <h2>1. Визначення термінів</h2>
+    <p>1.1. Адміністрація сайту — уповноважені особи Продавця, які керують сайтом і обробляють персональні дані.</p>
+    <p>1.2. Персональні дані — відомості про фізичну особу, яка ідентифікована або може бути ідентифікована.</p>
+    <p>1.3. Обробка персональних даних — будь-які дії з персональними даними: збирання, реєстрація, зберігання, адаптування, зміна, поновлення, використання, поширення (передача), знеособлення, знищення.</p>
+    <p>1.4. Конфіденційність персональних даних — обов’язок не допускати поширення персональних даних без згоди їх суб’єкта або іншої законної підстави.</p>
+    <p>1.5. Користувач — будь-яка особа, яка відвідує сайт, оформлює замовлення або залишає заявку.</p>
+    <p>1.6. Cookie та локальне сховище браузера — невеликі фрагменти даних, які сайт зберігає на пристрої користувача.</p>
+    <p>1.7. IP-адреса — унікальна мережева адреса пристрою в мережі Інтернет.</p>
+
+    <h2>2. Предмет Політики</h2>
+    <p>2.1. Користуючись сайтом, оформлюючи замовлення або заповнюючи форми на сайті, Користувач надає згоду на обробку своїх персональних даних на умовах цієї Політики та підтверджує, що досяг 18 років.</p>
+    <p>2.2. Згода надається на збирання, зберігання, оновлення, використання, передачу в межах розділу 5, знеособлення та видалення персональних даних. Користувач може відкликати згоду, звернувшись до Адміністрації сайту.</p>
+    <p>2.3. Персональні дані, які обробляються:</p>
+    <ul>
+      <li>прізвище та ім’я;</li>
+      <li>номер телефону;</li>
+      <li>адреса електронної пошти (якщо її вказано);</li>
+      <li>місто, відділення, поштомат або адреса доставки;</li>
+      <li>склад замовлення та коментар до нього.</li>
+    </ul>
+    <p>2.4. Дані платіжних карток вводяться лише на захищених сторінках платіжних сервісів monopay (АТ «Універсал Банк») та LiqPay (АТ КБ «ПриватБанк»). Продавець ці дані не отримує і не зберігає.</p>
+
+    <h2>3. Мета обробки персональних даних</h2>
+    <ul>
+      <li>прийняття, обробка, підтвердження та доставка замовлень, укладення договору купівлі-продажу дистанційним способом;</li>
+      <li>зв’язок з Користувачем щодо замовлення, обміну, повернення та консультацій щодо розміру;</li>
+      <li>консультація щодо вибору ковдри, якщо Користувач залишив номер у формі «Обери свою ковдру»;</li>
+      <li>виконання обов’язків Продавця перед Користувачем і вимог законодавства, зокрема бухгалтерського обліку;</li>
+      <li>покращення роботи сайту та обслуговування.</li>
+    </ul>
+
+    <h2>4. Які дані збираються</h2>
+    <p>4.1. Дані, які Користувач надає самостійно у формі замовлення, формі консультації щодо розміру та формі «Обери свою ковдру».</p>
+    <p>4.2. Технічні дані, які автоматично фіксуються сервером під час відвідування сайту (IP-адреса, тип браузера, час запиту). Вони використовуються лише для технічної роботи та захисту сайту.</p>
+    <p>4.3. Якщо Користувач вказує дані іншої особи (наприклад, отримувача подарунка), він підтверджує, що має її згоду на передачу цих даних.</p>
+
+    <h2>5. Способи та строки обробки</h2>
+    <p>5.1. Обробка персональних даних здійснюється з використанням автоматизованих систем і без них.</p>
+    <p>5.2. Персональні дані передаються третім особам лише в обсязі, необхідному для виконання замовлення:</p>
+    <ul>
+      <li>службам доставки «Нова пошта» та «Укрпошта»;</li>
+      <li>платіжним сервісам monopay та LiqPay;</li>
+      <li>сервісу Telegram, через який заявки надходять менеджеру Продавця;</li>
+      <li>сервісу Cloudflare, через який сайт безпечно передає заявки.</li>
+    </ul>
+    <p>5.3. Персональні дані зберігаються протягом строку, необхідного для досягнення мети обробки та виконання вимог законодавства, або до моменту відкликання згоди Користувачем.</p>
+
+    <h2>6. Права Користувача</h2>
+    <p>Відповідно до статті 8 Закону України «Про захист персональних даних» Користувач має право:</p>
+    <ul>
+      <li>знати, чи обробляються його персональні дані, з якою метою, звідки вони отримані та кому передаються;</li>
+      <li>отримати доступ до своїх персональних даних;</li>
+      <li>вимагати їх уточнення, доповнення, оновлення, виправлення або видалення;</li>
+      <li>вимагати блокування даних, які обробляються незаконно, та заперечити проти їх обробки;</li>
+      <li>відкликати згоду на обробку персональних даних;</li>
+      <li>звернутися зі скаргою до Уповноваженого Верховної Ради України з прав людини або до суду.</li>
+    </ul>
+    <p>Для цього Користувач звертається до Адміністрації сайту за контактами, наведеними в розділі 11.</p>
+
+    <h2>7. Cookie та локальне сховище</h2>
+    <p>7.1. Сайт не використовує рекламних або маркетингових cookie та не передає дані про відвідування рекламним мережам.</p>
+    <p>7.2. Вміст кошика зберігається лише в локальному сховищі браузера Користувача (localStorage), щоб він не зникав після оновлення сторінки. Користувач може очистити ці дані в налаштуваннях свого браузера.</p>
+
+    <h2>8. Захист персональних даних</h2>
+    <p>8.1. Продавець вживає організаційних і технічних заходів для захисту персональних даних від неправомірного доступу, знищення, зміни, блокування, копіювання, поширення та інших неправомірних дій.</p>
+    <p>8.2. Передача даних між браузером Користувача та сайтом здійснюється захищеним з’єднанням (HTTPS).</p>
+    <p>8.3. Ця Політика діє лише щодо цього сайту. Продавець не відповідає за сайти третіх осіб, на які можуть вести посилання з сайту.</p>
+    <p>8.4. Персональні дані можуть бути надані державним органам на їх законну вимогу у випадках, передбачених законодавством України.</p>
+
+    <h2>9. Додаткова інформація</h2>
+    <p>9.1. На запит Користувача Адміністрація сайту надає додаткову інформацію щодо обробки його персональних даних.</p>
+    <p>9.2. Сервер може фіксувати технічні журнали (логи), зокрема IP-адреси, виключно для забезпечення роботи та безпеки сайту.</p>
+
+    <h2>10. Зміни Політики</h2>
+    <p>10.1. Продавець може змінювати цю Політику. Нова редакція набирає чинності з моменту її розміщення на сайті, якщо інше не передбачено нею.</p>
+    <p>10.2. Якщо Користувач не погоджується зі змінами, він може припинити користування сайтом і звернутися з вимогою видалити свої персональні дані.</p>
+
+    <h2>11. Контактна інформація</h2>
+    <ul class="legal__req">
+      <li><b>Продавець:</b> <span data-legal="seller"></span></li>
+      <li><b>РНОКПП / ЄДРПОУ:</b> <span data-legal="ipn"></span></li>
+      <li><b>Адреса:</b> <span data-legal="address"></span></li>
+      <li><b>Телефон:</b> <span data-legal="phone"></span></li>
+      <li><b>E-mail:</b> <span data-legal="email"></span></li>
+    </ul>
+  </div>
+</section>
+
 <footer class="footer">
   <div class="wrap">
     <div class="footer__in">
@@ -848,13 +1297,62 @@ main > section > .wrap, .footer > .wrap{position:relative;z-index:1}
     </div>
     <div class="footer__copy">
       <span>© <span data-year>2026</span> Дюшес. Усі права захищено.</span>
+      <span class="footer__docs"><a href="#oferta" data-page-link>Публічна оферта</a><a href="#pryvatnist" data-page-link>Політика конфіденційності</a></span>
       <span class="paymarks"><span>monopay</span><span>LiqPay</span><span>Visa</span><span>Mastercard</span></span>
     </div>
   </div>
 </footer>
 
+<div class="drawer" id="cart-drawer" hidden>
+  <div class="drawer__scrim" data-drawer-close></div>
+  <aside class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title" tabindex="-1">
+    <div class="drawer__head">
+      <h2 id="drawer-title">Кошик <span class="drawer__count" data-cart-count>0</span></h2>
+      <button type="button" class="drawer__x" data-drawer-close aria-label="Закрити кошик">×</button>
+    </div>
+    <div class="drawer__body">
+      <div class="cartlist" data-drawer-list></div>
+    </div>
+    <div class="drawer__foot" data-drawer-foot>
+      <div class="totals">
+        <p><span>Сума</span><b data-sum>0 ₴</b></p>
+        <p class="disc" data-disc-row hidden><span data-disc-label>Знижка</span><b data-disc>0 ₴</b></p>
+        <p><span>Доставка</span><b data-ship></b></p>
+        <p class="big"><span>До сплати</span><b data-total>0 ₴</b></p>
+      </div>
+      <button type="button" class="btn wide" data-checkout>Оформити замовлення
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      <button type="button" class="drawer__more" data-drawer-close>Продовжити покупки</button>
+    </div>
+  </aside>
+</div>
+
 <button class="fab" type="button" data-action="open-cart" hidden><span data-fab-count>0</span> у кошику · <b data-fab-sum>0 ₴</b></button>
 
+
+<dialog class="consult" id="consult" aria-labelledby="consult-title">
+  <div class="consult__in" tabindex="-1">
+    <button type="button" class="consult__x" data-consult-close aria-label="Закрити">×</button>
+    <form id="consult-form" novalidate>
+      <h3 id="consult-title">Допоможемо підібрати розмір</h3>
+      <p class="consult__sub">Залиште контакти: зателефонуємо або напишемо й підкажемо розмір під вашу постільну білизну.</p>
+      <ul class="consult__sizes" data-consult-sizes></ul>
+      <div class="field"><label for="c-name">Ім'я</label><input id="c-name" name="cname" type="text" autocomplete="given-name" placeholder="Олена"></div>
+      <div class="field"><label for="c-phone">Телефон <i>*</i></label><input id="c-phone" name="cphone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+380 XX XXX XX XX"></div>
+      <div class="field"><label for="c-msg">Коментар</label><textarea id="c-msg" name="cmsg" rows="2" placeholder="Наприклад: підковдра 150×210, яка ковдра підійде?"></textarea></div>
+      <p class="formerror" data-consult-error hidden></p>
+      <button class="btn wide" type="submit" data-consult-submit>Чекаю на консультацію</button>
+      <p class="formnote">Відповімо в робочий час, зазвичай протягом дня. Надсилаючи заявку, ви погоджуєтесь з <a href="#pryvatnist" data-consult-close>політикою конфіденційності</a>.</p>
+    </form>
+    <div class="gift__done" data-consult-done hidden>
+      <p class="gift__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></p>
+      <h3>Дякуємо, заявку прийнято!</h3>
+      <p>Скоро зв'яжемося з вами й допоможемо обрати розмір.</p>
+      <button type="button" class="btn btn--ghost wide" data-consult-close>Добре</button>
+    </div>
+  </div>
+</dialog>
 
 <script>
 /* ============================================================
@@ -862,7 +1360,13 @@ main > section > .wrap, .footer > .wrap{position:relative;z-index:1}
    Ціну й знижки продублюйте в cloudflare-worker/worker.js (сервер рахує суму сам).
    ============================================================ */
 const CONFIG = {
-  price: 2699,                 // ціна за ковдру, ₴
+  price: 2699,                 // базова ціна (найменший розмір), ₴
+  // Розміри: однакові для всіх кольорів. Ціну кожного розміру продублюйте в cloudflare-worker/worker.js (SIZES).
+  sizes: [
+    { id: 'p', name: 'Полуторна',  dims: '140×205 / 150×210', price: 2699 },
+    { id: 'd', name: 'Двоспальна', dims: '175×205 / 180×210', price: 2699 },
+    { id: 'e', name: 'Євро',       dims: '200×220', price: 2699 }
+  ],
   // Акція на честь запуску: безкоштовна доставка до цієї дати (київський час). Після неї блок акції ховається сам.
   promoUntil: '2026-12-31T23:59:59+02:00',
   freeShipFrom: 0,             // безкоштовна доставка від суми ПІСЛЯ акції, ₴ (0 — вимкнути)
@@ -880,6 +1384,31 @@ const CONFIG = {
     ['Догляд та прання', 'Делікатне прання при температурі до 30–40 °C, віджим до 600–800 об/хв'],
     ['Країна-виробник', 'Україна (власне виробництво)']
   ],
+  // Реквізити для «Публічної оферти» та «Політики конфіденційності». Порожнє поле на сайті підсвічується як «вписати».
+  legal: {
+    seller: 'ФОП Войтишин Олександр Сергійович',
+    ipn: '3163914074',           // РНОКПП (ІПН)
+    address: 'м. Київ, вул. Тростянецька, 6г',   // ← за потреби замініть на адресу реєстрації ФОП з індексом
+    city: 'Київ',
+    phone: '',                   // ← телефон у документах (порожній — рядок приховано)
+    email: '',                   // ← email у документах (порожній — рядок приховано)
+    iban: 'UA253052990000026008016226806',
+    bank: 'АТ КБ «ПРИВАТБАНК», МФО 305299',
+    site: 'trochinskaja03-arch.github.io/Dushes',
+    date: '«23» листопада 2026 року'
+  },
+  // Сторінка товару (відкривається при натисканні на фото в картці)
+  product: {
+    name: 'Затишна стьобана ковдра «Хмарка»',
+    sub: 'Тепла стьобана ковдра з мікрофібри з наповнювачем шерстепон (напіввовна)',
+    short: 'Повітряна, м’яка та надзвичайно тепла ковдра власного українського виробництва. Поєднання ніжної гіпоалергенної мікрофібри та дихаючого шерстепону створює ідеальний мікроклімат для сну: ковдра швидко зігріває, не парить і залишається майже невагомою. Завдяки міцному фігурному стьобанню та охайній окантовці виріб бездоганно тримає форму навіть після багаторазового прання.',
+    benefits: [
+      'Сухе та комфортне тепло без парникового ефекту в будь-яку пору року',
+      'Не збивається грудочками завдяки рівномірному фігурному стьобанню',
+      'Приємна на дотик тканина, що не кошлатиться, не електризується та підходить чутливій шкірі',
+      'Пряма ціна від виробника в Україні з ретельною перевіркою кожного шва перед відправкою'
+    ]
+  },
   care: ['Власне виробництво', 'Стьобка по всій площі', 'Однакова якість у всіх кольорах'],
   // Фото: покладіть файли в папку img/ і впишіть назви. Відео — mp4 до ~8 МБ.
   hero:  { photo: '', video: '' },   // напр. { photo:'img/stos.jpg', video:'img/hero.mp4' }
@@ -964,11 +1493,15 @@ const FAQ = [
   { const fs = $('[data-fact-size]'); if (fs) fs.textContent = CONFIG.size || 'скоро'; }
   $('[data-spec]').innerHTML = CONFIG.spec.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd class="${v ? '' : 'tbc'}">${v ? esc(v) : 'уточнюється'}</dd></div>`).join('');
   $('[data-care-chips]').innerHTML = CONFIG.care.map(t => `<li>${esc(t)}</li>`).join('');
-  $('[data-colors-lead]').textContent = `Кожна ковдра однакового розміру й якості. Відрізняється лише колір. Ціна для всіх ${money(CONFIG.price)}.`;
+  $('[data-colors-lead]').textContent = `Кожна ковдра однакової якості й шиється у трьох розмірах. Оберіть колір і розмір просто в картці.`;
   mediaSlot($('[data-hero-media]'), CONFIG.hero, 'Ковдри Дюшес у чотирьох кольорах');
   mediaSlot($('[data-about-media]'), CONFIG.about, 'Ковдра Дюшес крупним планом');
   $('[data-year]').textContent = new Date().getFullYear();
   const ct = CONFIG.contacts;
+  { const L = CONFIG.legal, ct0 = CONFIG.contacts;
+    const val = { ...L };
+    const label = { seller: 'ПІБ ФОП / ТОВ', ipn: 'РНОКПП / ЄДРПОУ', address: 'адреса реєстрації', city: 'місто', iban: 'IBAN', bank: 'банк', phone: 'телефон', email: 'email' };
+    $$('[data-legal]').forEach(el => { const k = el.dataset.legal; if (val[k]) el.textContent = val[k]; else if (k === 'phone' || k === 'email') { const li = el.closest('li'); if (li) li.hidden = true; } else { el.textContent = `[${label[k] || k}]`; el.classList.add('legal__todo'); } }); }
   $('[data-contacts]').innerHTML = [
     ct.phone && `<a href="tel:${esc(ct.phone.replace(/[^+\d]/g, ''))}">${esc(ct.phone)}</a>`,
     ct.email && `<a href="mailto:${esc(ct.email)}">${esc(ct.email)}</a>`,
@@ -980,15 +1513,22 @@ const FAQ = [
   /* colour cards */
   $('[data-colors]').innerHTML = Object.entries(COLORS).map(([k, c]) => `
     <article class="color" data-appear>
-      <div class="color__media${c.photos ? ' gal' : ''}"${c.photos ? ' data-gal' : ''}>${c.photos
+      <div class="color__media${c.photos ? ' gal' : ''}"${c.photos ? ' data-gal' : ''} data-open="${k}" title="Детальніше про ковдру">${c.photos
         ? c.photos.map((src, i) => `<img class="gal__img${i ? '' : ' is-on'}" src="${esc(src)}" alt="Ковдра Дюшес, ${esc(c.name.toLowerCase())}${i ? ', у фірмовому чохлі' : ''}" loading="lazy" decoding="async" width="720" height="960">`).join('')
+          + `<button type="button" class="gal__arrow gal__arrow--prev" data-gal-step="-1" aria-label="Попереднє фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>`
+          + `<button type="button" class="gal__arrow gal__arrow--next" data-gal-step="1" aria-label="Наступне фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>`
           + `<div class="gal__dots">${c.photos.map((_, i) => `<button type="button" aria-label="${i ? 'Фото в чохлі' : 'Фото ковдри'}" aria-pressed="${i ? 'false' : 'true'}" data-gal-i="${i}"></button>`).join('')}</div>`
         : visual(k, 'card-' + k, 'Ковдра Дюшес, колір ' + c.name.toLowerCase())}${c.tag ? `<span class="color__tag">${esc(c.tag)}</span>` : ''}</div>
       <div class="color__body">
-        <h3><span class="dot" style="background:${c.hex}"></span>${esc(c.name)}</h3>
+        <h3><span class="dot" style="background:${c.hex}"></span><a href="#kovdra-${k}">${esc(c.name)}</a></h3>
         <p class="color__desc">${esc(c.desc)}</p>
-        <p class="color__price">${money(CONFIG.price)}${CONFIG.size ? `<span>${esc(CONFIG.size)} см</span>` : ''}</p>
-        <button class="btn btn--ghost" type="button" data-add="${k}">У кошик</button>
+        <a class="color__more" href="#kovdra-${k}">Опис і характеристики →</a>
+        <div class="sizes" role="radiogroup" aria-label="Розмір ковдри, колір ${esc(c.name.toLowerCase())}">
+          ${CONFIG.sizes.map((z, i) => `<button type="button" class="size" role="radio" aria-checked="false" data-size="${z.id}" data-color="${k}"><b>${esc(z.name)}</b><span>${esc(z.dims)} см</span></button>`).join('')}
+        </div>
+        <button type="button" class="color__help" data-consult="${k}">Допомогти підібрати розмір</button>
+        <p class="color__price" data-price="${k}">${money(CONFIG.sizes[0].price)}</p>
+        <div class="buy" data-buy="${k}"></div>
       </div>
     </article>`).join('');
 
@@ -1012,44 +1552,25 @@ const FAQ = [
       e.preventDefault(); lerr.hidden = true;
       const phone = lf.lphone.value.replace(/[^\d+]/g, '');
       if (!/^(\+?38)?0\d{9}$/.test(phone)) { lerr.textContent = 'Перевірте номер: наприклад +380 67 123 45 67.'; lerr.hidden = false; lf.lphone.classList.add('is-error'); lf.lphone.focus(); return; }
-      const btn = $('[data-lead-submit]'); btn.disabled = true; btn.textContent = 'Зберігаємо…';
+      const btn = $('[data-lead-submit]'); btn.disabled = true; btn.textContent = 'Надсилаємо…';
       let ok = PREVIEW;
       if (!PREVIEW) {
         try {
           const r = await fetch(CONFIG.apiBase + '/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: lf.lname.value.trim(), phone: lf.lphone.value.trim() }) });
+            body: JSON.stringify({ topic: 'choose', name: lf.lname.value.trim(), phone: lf.lphone.value.trim() }) });
           ok = r.ok;
         } catch (err) { ok = false; }
       }
       if (ok) { lf.hidden = true; $('[data-lead-done]').hidden = false; }
-      else { btn.disabled = false; btn.textContent = 'Нагадайте мені'; lerr.textContent = 'Не вдалося зберегти номер. Спробуйте ще раз або напишіть нам в Instagram.'; lerr.hidden = false; }
+      else { btn.disabled = false; btn.textContent = 'Допоможіть мені обрати'; lerr.textContent = 'Не вдалося надіслати номер. Спробуйте ще раз або напишіть нам в Instagram.'; lerr.hidden = false; }
     });
   }
 
   /* ---------- груші-прикраси: кожна «визирає» з-за конкретного елемента ---------- */
   // [елемент, кут: tl/tr/bl/br/ml/mr, зсув x і y (у частках розміру груші), висота px, нахил°]
   // Груша лежить поверх кута елемента, як брошка: заходить на нього приблизно на третину.
-  const PEARS_DESKTOP = [
-    ['.hero__media',                 'bl', -0.58, -0.62, 80, -12],
-    ['.split__media',                'tr', -0.68, -0.42, 54,  14],
-    ['#materialy .spec',             'mr',  0.90, -0.50, 40,   8],
-    ['.colors .color:last-child',    'tr', -0.70, -0.45, 58,  16],
-    ['.gift',                        'tr', -0.62, -0.42, 92,  -8, 'festive'],
-    ['.care__item:last-child',       'tr', -0.70, -0.42, 44,  12],
-    ['#vidhuky .review:last-child',  'tr', -0.70, -0.42, 46, -14],
-    ['.order > .panel:last-child',   'tr', -0.66, -0.40, 54,  10],
-    ['.footer__logo img',            'mr',  0.30, -0.62, 34,  -8],
-    ['#spivpratsia .coop .card:last-child', 'tr', -0.66, -0.42, 56, 12]
-  ];
-  const PEARS_MOBILE = [
-    ['.hero__media',                 'tr', -0.62, -0.26, 48,  12],
-    ['.split__media',                'tr', -0.82, -0.46, 40, -10],
-    ['.colors .color:nth-child(2)',  'tr', -0.86, -0.48, 38,  14],
-    ['.gift',                        'tr', -0.84, -0.44, 60,  -8, 'festive'],
-    ['.order__cart',                 'tr', -0.88, -0.44, 40,  10],
-    ['.footer__logo img',            'mr',  0.30, -0.62, 28,  -8],
-    ['#spivpratsia .coop .card:first-child', 'tr', -0.86, -0.44, 40, 12]
-  ];
+  const PEARS_DESKTOP = []; // груші-прикраси вимкнено
+  const PEARS_MOBILE = [];
   const PEAR_IMG = { normal: ['img/pear.png', 154 / 260], festive: ['img/pear-festive.png', 168 / 320] }; // святкова — з гірляндою й зірочкою
   const pearField = document.createElement('div');
   pearField.className = 'pear-field'; pearField.setAttribute('aria-hidden', 'true');
@@ -1062,6 +1583,7 @@ const FAQ = [
     pearField.style.height = '0px';                       // спершу прибираємо стару висоту, щоб не тягнула сторінку
     pearField.style.height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) + 'px';
     const html = [], meta = [];
+    const noPear = $$('.faqsec').map(e => { const b = e.getBoundingClientRect(); return [b.top + sy, b.bottom + sy]; }); // у «Питаннях» груш не ставимо
     list.forEach(([sel, corner, dx, dy, size, rot, kind = 'normal'], i) => {
       const [PEAR_SRC, PEAR_RATIO] = PEAR_IMG[kind];
       const el = document.querySelector(sel); if (!el) return;
@@ -1071,6 +1593,7 @@ const FAQ = [
       const ay = corner[0] === 't' ? r.top : corner[0] === 'b' ? r.bottom : r.top + r.height / 2;
       let x = ax + dx * w, y = ay + sy + dy * h;
       x = Math.min(Math.max(x, 4), W - w - 4);
+      if (noPear.some(([t, b]) => y + h > t && y < b)) return;
       html.push(`<img class="pear" src="${PEAR_SRC}" alt="" decoding="async" style="left:${x.toFixed(0)}px;top:${y.toFixed(0)}px;--s:${h.toFixed(0)}px;--r:${rot}deg">`);
       meta.push({ base: rot, max: 4 + (i % 3) * 1.5, period: 260 + (i * 37) % 120, phase: i * 1.7 });
     });
@@ -1083,7 +1606,8 @@ const FAQ = [
   window.addEventListener('load', relayout);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
   window.addEventListener('resize', relayout);
-  if ('ResizeObserver' in window) new ResizeObserver(relayout).observe(document.querySelector('main'));
+  if ('ResizeObserver' in window) { const ro = new ResizeObserver(relayout); ro.observe(document.querySelector('main')); ro.observe(document.body); }
+  document.addEventListener('toggle', relayout, true);
 
   if (!reduce) {
     let amp = 0, lastY = window.scrollY, raf = 0;
@@ -1102,12 +1626,15 @@ const FAQ = [
   }
 
   /* ---------- окремі сторінки: «Про нас» і «Співпраця» ---------- */
-  const PAGES = ['pro-nas', 'spivpratsia'];
+  const PAGES = ['pro-nas', 'spivpratsia', 'tovar', 'oferta', 'pryvatnist'];
+  const baseTitle = document.title;
   const mainEl = $('#main');
   const cp = $('[data-coop-phone]'); if (cp && CONFIG.contacts.phone) cp.textContent = CONFIG.contacts.phone;
   function route() {
     const h = decodeURIComponent(location.hash.slice(1));
-    const page = PAGES.includes(h) ? h : null;
+    const pk = /^kovdra-(\w+)$/.exec(h), prod = pk && COLORS[pk[1]] ? pk[1] : null;
+    const page = prod ? 'tovar' : PAGES.includes(h) && h !== 'tovar' ? h : null;
+    if (typeof showProduct === 'function') showProduct(prod);
     mainEl.hidden = !!page;
     PAGES.forEach(id => { $('#' + id).hidden = id !== page; });
     $$('a[data-page-link]').forEach(a => { if (a.getAttribute('href') === '#' + h) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
@@ -1125,21 +1652,54 @@ const FAQ = [
     g.dataset.cur = i;
   }
   const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
-  $$('[data-gal]').forEach(g => {
+  function bindGal(g, noZoom) {
     const n = $$('.gal__img', g).length;
-    g.addEventListener('click', e => { const b = e.target.closest('[data-gal-i]'); if (b) { e.stopPropagation(); galShow(g, +b.dataset.galI); } });
-    if (finePointer) {
-      const card = g.closest('.color');
-      card.addEventListener('mouseenter', () => galShow(g, 1));
-      card.addEventListener('mouseleave', () => galShow(g, 0));
+    g.addEventListener('click', e => {
+      const b = e.target.closest('[data-gal-i]'); if (b) { e.stopPropagation(); galShow(g, +b.dataset.galI); return; }
+      const st = e.target.closest('[data-gal-step]'); if (st) { e.stopPropagation(); galShow(g, ((+g.dataset.cur || 0) + +st.dataset.galStep + n) % n); return; }
+      if (g.dataset.open && !g.dataset.swiped) location.hash = 'kovdra-' + g.dataset.open; // натиск на фото — сторінка товару
+    });
+    if (finePointer && !reduce && !noZoom) {
+      // Лупа: при наведенні фото збільшується в точці під курсором
+      const unzoom = () => { g.classList.remove('is-zoom'); };
+      g.addEventListener('mousemove', e => {
+        if (e.target.closest('.gal__arrow, .gal__dots, .color__tag')) { unzoom(); return; }
+        const r = g.getBoundingClientRect();
+        const x = ((e.clientX - r.left) / r.width * 100).toFixed(1), y = ((e.clientY - r.top) / r.height * 100).toFixed(1);
+        $$('.gal__img', g).forEach(im => { im.style.transformOrigin = `${x}% ${y}%`; });
+        g.classList.add('is-zoom');
+      });
+      g.addEventListener('mouseleave', unzoom);
     }
     let x0 = null;
     g.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
     g.addEventListener('touchend', e => {
       if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null;
-      if (Math.abs(dx) > 30) galShow(g, ((+g.dataset.cur || 0) + (dx < 0 ? 1 : -1) + n) % n);
+      if (Math.abs(dx) > 30) { galShow(g, ((+g.dataset.cur || 0) + (dx < 0 ? 1 : -1) + n) % n); g.dataset.swiped = '1'; setTimeout(() => { delete g.dataset.swiped; }, 400); }
     }, { passive: true });
+  }
+  $$('[data-gal]').forEach(g => bindGal(g));
+
+  /* ---------- фонове відео в «Питаннях» ---------- */
+  $$('[data-bgvideo]').forEach(v => {
+    if (reduce) return; // «зменшити рух» — лишається нерухоме фото
+    v.muted = true; v.setAttribute('muted', ''); v.playsInline = true;
+    const start = () => { if (!v.src) { v.src = innerWidth <= 760 && v.dataset.srcM ? v.dataset.srcM : v.dataset.src; v.load(); } const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); };
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) start(); else if (v.src) v.pause(); }), { rootMargin: '200px 0px' }).observe(v);
+    } else start();
+    document.addEventListener('visibilitychange', () => { if (document.hidden) v.pause(); else if (v.src && v.getBoundingClientRect().top < innerHeight) start(); });
   });
+
+  /* ---------- груша падає біля кнопки «Обрати ковдру» ---------- */
+  { const pd = $('[data-pdrop]');
+    if (pd && !reduce && 'IntersectionObserver' in window) {
+      pd.classList.add('is-ready');
+      new IntersectionObserver(es => es.forEach(e => {
+        if (e.isIntersecting) { pd.classList.remove('is-ready'); pd.classList.add('is-drop'); }
+        else if (e.boundingClientRect.top > 0) { pd.classList.remove('is-drop'); pd.classList.add('is-ready'); } // прокрутили назад угору — наступного разу впаде знову
+      }), { threshold: 0.9 }).observe(pd.closest('.promo__cta'));
+    } }
 
   /* ---------- menu ---------- */
   const burger = $('.burger'), mnav = $('#mnav');
@@ -1154,33 +1714,117 @@ const FAQ = [
     $$('[data-appear]').forEach(el => io.observe(el));
   } else $$('[data-appear]').forEach(el => el.classList.add('is-in'));
 
+  /* ---------- сторінка товару ---------- */
+  const orderBox = $('#zamovlennia .order');
+  function showProduct(k) {
+    if (!k) { document.title = baseTitle; return; }
+    const c = COLORS[k], P = CONFIG.product, photos = c.photos || [];
+    document.title = `${P.name}, ${c.name.toLowerCase()} · Дюшес`;
+    $('[data-pd]').innerHTML = `<div class="pd">
+      <div class="pd__media">
+        <div class="color__media gal" data-gal>${photos.map((src, i) => `<img class="gal__img${i ? '' : ' is-on'}" src="${esc(src)}" alt="${esc(P.name)}, ${esc(c.name.toLowerCase())}${i ? ', у фірмовому чохлі' : ''}" width="720" height="960">`).join('')}
+          <button type="button" class="gal__arrow gal__arrow--prev" data-gal-step="-1" aria-label="Попереднє фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <button type="button" class="gal__arrow gal__arrow--next" data-gal-step="1" aria-label="Наступне фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+          <div class="gal__dots">${photos.map((_, i) => `<button type="button" aria-label="${i ? 'Фото в чохлі' : 'Фото ковдри'}" aria-pressed="${i ? 'false' : 'true'}" data-gal-i="${i}"></button>`).join('')}</div>
+        </div>
+      </div>
+      <div class="pd__info">
+        <p class="kicker">Ковдра «Хмарка» · ${esc(c.name)}</p>
+        <h1 class="pd__title" id="pd-title">${esc(P.name)}</h1>
+        <p class="pd__sub">${esc(P.sub)}</p>
+        <p class="pd__label">Колір</p>
+        <div class="pd__colors"><span class="pd__color"><span class="dot" style="background:${c.hex}"></span>${esc(c.name)}</span></div>
+        <p class="pd__short">${esc(P.short)}</p>
+        <p class="pd__label">Розмір</p>
+        <div class="sizes" role="radiogroup" aria-label="Розмір ковдри">
+          ${CONFIG.sizes.map(z => `<button type="button" class="size" role="radio" aria-checked="${sel[k] === z.id}" data-size="${z.id}" data-color="${k}"><b>${esc(z.name)}</b><span>${esc(z.dims)} см</span></button>`).join('')}
+        </div>
+        <p class="pd__hint">Залиште ваші точні розміри в коментарі під час оформлення замовлення або <button type="button" class="color__help" data-consult="${k}">попросіть нас допомогти з вибором</button>.</p>
+        <p class="pd__price"><span class="pd__sum" data-price="${k}">${money((SIZE[sel[k]] || CONFIG.sizes[0]).price)}</span>${promoOn() ? '<small>Безкоштовна доставка до Нового року</small>' : ''}</p>
+        <div class="pd__buy"><div class="buy" data-buy="${k}"></div><button type="button" class="btn" data-buynow="${k}">Оформити замовлення</button></div>
+        <ul class="pd__benefits">${P.benefits.map(b => `<li>${esc(b)}</li>`).join('')}</ul>
+      </div>
+    </div>
+    <h2 class="pd__h">Характеристики</h2>
+    <table class="pd__specs"><tbody>${CONFIG.spec.map(([a, b]) => `<tr><th scope="row">${esc(a)}</th><td>${esc(b || 'уточнюється')}</td></tr>`).join('')}</tbody></table>`;
+    $$('[data-pd] [data-gal]').forEach(g => bindGal(g, true));
+    if (typeof render === 'function' && typeof cart !== 'undefined') render();
+  }
+
   /* ---------- cart ---------- */
-  const KEY = 'dushes-cart-v1';
+  const KEY = 'dushes-cart-v2';
+  const MAX = 100; // максимум однієї ковдри одного розміру в кошику (продублюйте в worker.js)
+  const SIZE = Object.fromEntries(CONFIG.sizes.map(z => [z.id, z]));
+  const sel = Object.fromEntries(Object.keys(COLORS).map(k => [k, null])); // розмір, який клієнт обрав у картці (спочатку жодного)
+  const keyOf = (color, size) => color + '|' + size;
+  const parseKey = key => { const [color, size] = key.split('|'); return { color, size, c: COLORS[color], z: SIZE[size] }; };
   let cart = {};
-  try { const raw = JSON.parse(localStorage.getItem(KEY) || '{}'); Object.keys(raw).forEach(k => { if (COLORS[k]) cart[k] = Math.max(1, Math.min(20, +raw[k] || 1)); }); } catch (e) {}
+  try { const raw = JSON.parse(localStorage.getItem(KEY) || '{}'); Object.keys(raw).forEach(k => { const it = parseKey(k); if (it.c && it.z) cart[k] = Math.max(1, Math.min(MAX, +raw[k] || 1)); }); } catch (e) {}
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(cart)); } catch (e) {} };
   let inOrder = false; // ховаємо плаваючу кнопку, коли клієнт уже в блоці замовлення
   if ('IntersectionObserver' in window) {
-    new IntersectionObserver(es => { inOrder = es[0].isIntersecting; render(); }, { threshold: 0.05 }).observe($('#zamovlennia'));
+    new IntersectionObserver(es => { inOrder = es[0].isIntersecting; render(); }, { threshold: 0.05 }).observe(orderBox);
   }
   const count = () => Object.values(cart).reduce((a, b) => a + b, 0);
   function totals() {
-    const qty = count(), sum = qty * CONFIG.price;
+    const qty = count(), sum = Object.entries(cart).reduce((a, [k, n]) => a + parseKey(k).z.price * n, 0);
     const tier = CONFIG.discounts.slice().sort((a, b) => b.min - a.min).find(d => qty >= d.min);
     const discount = tier ? Math.round(sum * tier.rate) : 0;
     const total = sum - discount;
     return { qty, sum, discount, rate: tier ? tier.rate : 0, total, free: promoOn() || (CONFIG.freeShipFrom > 0 && total >= CONFIG.freeShipFrom) };
   }
   let toastT;
+  /* ---------- консультація щодо розміру ---------- */
+  const cdlg = $('#consult'), cform = $('#consult-form'), cerr = $('[data-consult-error]');
+  let consultColor = '';
+  $('[data-consult-sizes]').innerHTML = CONFIG.sizes.map(z => `<li><b>${esc(z.name)}:</b> ${esc(z.dims)} см</li>`).join('');
+  function openConsult(color) {
+    consultColor = color || '';
+    cform.hidden = false; $('[data-consult-done]').hidden = true; cerr.hidden = true;
+    const b = $('[data-consult-submit]'); b.disabled = false; b.textContent = 'Чекаю на консультацію';
+    if (cdlg.showModal) cdlg.showModal(); else cdlg.setAttribute('open', '');
+    $('.consult__in').focus();
+    document.documentElement.style.overflow = 'hidden';
+  }
+  const closeConsult = () => { if (cdlg.close) cdlg.close(); else cdlg.removeAttribute('open'); };
+  cdlg.addEventListener('close', () => { document.documentElement.style.overflow = ''; });
+  cdlg.addEventListener('click', e => { if (e.target === cdlg || e.target.closest('[data-consult-close]')) closeConsult(); });
+  cform.addEventListener('submit', async e => {
+    e.preventDefault(); cerr.hidden = true; cform.cphone.classList.remove('is-error');
+    const phone = cform.cphone.value.replace(/[^\d+]/g, '');
+    if (!/^(\+?38)?0\d{9}$/.test(phone)) { cerr.textContent = 'Перевірте номер: наприклад +380 67 123 45 67.'; cerr.hidden = false; cform.cphone.classList.add('is-error'); cform.cphone.focus(); return; }
+    const b = $('[data-consult-submit]'); b.disabled = true; b.textContent = 'Надсилаємо…';
+    let ok = PREVIEW;
+    if (!PREVIEW) {
+      try {
+        const r = await fetch(CONFIG.apiBase + '/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topic: 'size', name: cform.cname.value.trim(), phone: cform.cphone.value.trim(), comment: cform.cmsg.value.trim().slice(0, 500), color: consultColor, size: consultColor ? sel[consultColor] : '' }) });
+        ok = r.ok;
+      } catch (err) { ok = false; }
+    }
+    if (ok) { cform.hidden = true; $('[data-consult-done]').hidden = false; }
+    else { b.disabled = false; b.textContent = 'Чекаю на консультацію'; cerr.textContent = 'Не вдалося надіслати. Спробуйте ще раз або напишіть нам в Instagram.'; cerr.hidden = false; }
+  });
+
   function toast(msg) {
     let t = $('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
     t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2200);
   }
-  function add(k, n = 1, quiet) {
-    cart[k] = Math.min(20, (cart[k] || 0) + n); save(); render();
-    if (!quiet) toast(`${COLORS[k].name} ковдра в кошику`);
+  function add(color, n = 1, quiet) {
+    if (!sel[color]) { needSize(color); return; }
+    const k = keyOf(color, sel[color]);
+    if ((cart[k] || 0) >= MAX) { toast(`Максимум ${MAX} шт. одного розміру`); return; }
+    cart[k] = Math.min(MAX, (cart[k] || 0) + n); save(); render();
+    if (!quiet) toast(`${COLORS[color].name}, ${SIZE[sel[color]].name.toLowerCase()} — у кошику`);
   }
-  function setQty(k, n) { if (n <= 0) delete cart[k]; else cart[k] = Math.min(20, n); save(); render(); }
+  function needSize(color) {
+    toast('Спершу оберіть розмір ковдри');
+    $$(`[data-size][data-color="${color}"]`).map(b => b.parentNode).filter((g, i, a) => a.indexOf(g) === i).forEach(g => {
+      if (!g.offsetParent) return;
+      g.classList.remove('need'); void g.offsetWidth; g.classList.add('need');
+    });
+  }
+  function setQty(k, n) { if (n > MAX) toast(`Максимум ${MAX} шт. одного розміру`); if (n <= 0) delete cart[k]; else cart[k] = Math.min(MAX, n); save(); render(); }
 
   function render() {
     const t = totals();
@@ -1188,24 +1832,39 @@ const FAQ = [
     const fab = $('.fab');
     fab.hidden = t.qty === 0 || inOrder; document.body.classList.toggle('has-fab', t.qty > 0);
     $('[data-fab-count]').textContent = t.qty; $('[data-fab-sum]').textContent = money(t.total);
-    $$('[data-add]').forEach(b => { const k = b.dataset.add; b.classList.toggle('is-added', !!cart[k]); b.textContent = cart[k] ? `У кошику · ${cart[k]}` : 'У кошик'; });
+    const fk = document.activeElement && document.activeElement.closest && document.activeElement.closest('[data-buy]') ? [document.activeElement.closest('[data-buy]'), document.activeElement.hasAttribute('data-dec') ? 'dec' : document.activeElement.hasAttribute('data-del') ? 'del' : 'inc'] : null;
+    $$('[data-buy]').forEach(slot => {
+      const k = slot.dataset.buy, key = keyOf(k, sel[k]), n = sel[k] ? cart[key] || 0 : 0, c = COLORS[k], z = SIZE[sel[k]];
+      const html = n
+        ? `<div class="stepper"><button type="button" data-dec="${key}" aria-label="Менше: ${esc(c.name)}, ${esc(z.name)}">−</button><span aria-live="polite">${n}<i> у кошику</i></span><button type="button" data-inc="${key}"${n >= MAX ? ' disabled' : ''} aria-label="Більше: ${esc(c.name)}, ${esc(z.name)}">+</button></div><button type="button" class="trash" data-del="${key}" aria-label="Прибрати з кошика: ${esc(c.name)}, ${esc(z.name)}" title="Прибрати з кошика"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg><i>Прибрати</i></button>`
+        : `<button class="btn btn--ghost" type="button" data-add="${k}">У кошик</button>`;
+      if (slot.dataset.html !== html) { slot.innerHTML = html; slot.dataset.html = html; }
+    });
+    if (fk && !fk[0].contains(document.activeElement)) { const b = $(fk[1] === 'del' ? '[data-del]' : fk[1] === 'dec' ? '[data-dec]' : '[data-inc]', fk[0]) || $('[data-add]', fk[0]); if (b) b.focus(); }
+    $$('[data-price]').forEach(el => {
+      const k = el.dataset.price, z = SIZE[sel[k]] || CONFIG.sizes[0], n = sel[k] ? cart[keyOf(k, sel[k])] || 0 : 0;
+      el.innerHTML = n > 1 ? `${money(n * z.price)}<span>${n} × ${money(z.price)}</span>` : money(z.price);
+    });
+    $$('[data-size]').forEach(b => b.classList.toggle('in-cart', !!cart[keyOf(b.dataset.color, b.dataset.size)]));
+    $$('[data-cart-sum]').forEach(el => el.textContent = money(t.total));
 
-    const list = $('[data-cart-list]');
-    if (!t.qty) list.innerHTML = '<p class="cartlist__empty">Кошик порожній. Оберіть колір у <a href="#kolory">колекції</a>.</p>';
-    else list.innerHTML = Object.entries(cart).map(([k, n]) => {
-      const c = COLORS[k];
+    const listHTML = !t.qty ? '<p class="cartlist__empty">Кошик порожній. Оберіть колір у <a href="#kolory" data-drawer-close>колекції</a>.</p>' : Object.entries(cart).map(([k, n]) => {
+      const { c, z } = parseKey(k);
       return `<div class="citem">
         <div class="citem__sw" style="background:${c.hex}">${c.photo ? `<img src="${esc(c.photo)}" alt="">` : ''}</div>
-        <div><p class="citem__name">${esc(c.name)} ковдра</p><p class="citem__meta">${money(CONFIG.price)} × ${n}</p></div>
-        <div class="qty"><button type="button" data-dec="${k}" aria-label="Менше: ${esc(c.name)}">−</button><output aria-live="polite">${n}</output><button type="button" data-inc="${k}" aria-label="Більше: ${esc(c.name)}">+</button></div>
+        <div><p class="citem__name">${esc(c.name)} ковдра</p><p class="citem__meta">${esc(z.name)} ${esc(z.dims)} см · ${money(z.price)} × ${n}</p></div>
+        <div class="qty"><button type="button" data-dec="${k}" aria-label="Менше: ${esc(c.name)}, ${esc(z.name)}">−</button><output aria-live="polite">${n}</output><button type="button" data-inc="${k}"${n >= MAX ? ' disabled' : ''} aria-label="Більше: ${esc(c.name)}, ${esc(z.name)}">+</button></div>
+        <button type="button" class="trash trash--sm" data-del="${k}" aria-label="Прибрати з кошика: ${esc(c.name)}, ${esc(z.name)}" title="Прибрати з кошика"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button>
       </div>`;
     }).join('');
-    $('[data-sum]').textContent = money(t.sum);
-    $('[data-disc-row]').hidden = !t.discount;
-    $('[data-disc-label]').textContent = `Знижка −${Math.round(t.rate * 100)}%`;
-    $('[data-disc]').textContent = '−' + money(t.discount);
-    $('[data-ship]').textContent = t.free ? 'безкоштовно' : 'за тарифами перевізника';
-    $('[data-total]').textContent = money(t.total);
+    $$('[data-cart-list], [data-drawer-list]').forEach(l => { l.innerHTML = listHTML; });
+    $('[data-drawer-foot]').hidden = !t.qty;
+    $$('[data-sum]').forEach(el => el.textContent = money(t.sum));
+    $$('[data-disc-row]').forEach(el => el.hidden = !t.discount);
+    $$('[data-disc-label]').forEach(el => el.textContent = `Знижка −${Math.round(t.rate * 100)}%`);
+    $$('[data-disc]').forEach(el => el.textContent = '−' + money(t.discount));
+    $$('[data-ship]').forEach(el => el.textContent = t.free ? 'безкоштовно' : 'за тарифами перевізника');
+    $$('[data-total]').forEach(el => el.textContent = money(t.total));
     const fs = $('[data-freeship]');
     if (CONFIG.freeShipFrom && t.qty && !t.free) { fs.hidden = false; fs.textContent = `Додайте ще на ${money(CONFIG.freeShipFrom - t.total)}, і доставка буде безкоштовною.`; }
     else if (t.free && t.qty) { fs.hidden = false; fs.textContent = promoOn() ? 'Доставку оплачуємо ми: акція на честь запуску діє до 31 грудня.' : 'Доставку оплачуємо ми.'; }
@@ -1214,41 +1873,134 @@ const FAQ = [
   }
 
   document.addEventListener('click', e => {
+    const sz = e.target.closest('[data-size]');
+    if (sz) { sel[sz.dataset.color] = sz.dataset.size; $$(`.sizes.need`).forEach(g => g.classList.remove('need')); $$(`[data-size][data-color="${sz.dataset.color}"]`).forEach(b => b.setAttribute('aria-checked', String(b === sz))); render(); return; }
+    const cs = e.target.closest('[data-consult]'); if (cs) { openConsult(cs.dataset.consult); return; }
     const a = e.target.closest('[data-add]'); if (a) { add(a.dataset.add); return; }
+    const bn = e.target.closest('[data-buynow]');
+    if (bn) { const k = bn.dataset.buynow; if (!sel[k]) { needSize(k); return; } if (!cart[keyOf(k, sel[k])]) add(k, 1, true); goCart(); return; }
     const inc = e.target.closest('[data-inc]'); if (inc) { setQty(inc.dataset.inc, (cart[inc.dataset.inc] || 0) + 1); return; }
+    const del = e.target.closest('[data-del]'); if (del) { const it = parseKey(del.dataset.del); setQty(del.dataset.del, 0); toast(`${it.c.name}, ${it.z.name.toLowerCase()} — прибрано з кошика`); return; }
     const dec = e.target.closest('[data-dec]'); if (dec) { setQty(dec.dataset.dec, (cart[dec.dataset.dec] || 0) - 1); return; }
-    if (e.target.closest('[data-action="open-cart"]')) goCart();
+    if (e.target.closest('[data-action="open-cart"]')) { openDrawer(); return; }
+    if (e.target.closest('[data-checkout]')) { closeDrawer(); goCart(); return; }
+    if (e.target.closest('[data-drawer-close]')) closeDrawer();
   });
+  /* ---------- кошик-панель (як у Purrfect): усе замовлення, сума, кількість і кнопка оформлення ---------- */
+  const drawer = $('#cart-drawer');
+  let drawerBack = null;
+  function openDrawer() {
+    drawerBack = document.activeElement;
+    drawer.hidden = false; document.documentElement.style.overflow = 'hidden';
+    requestAnimationFrame(() => { drawer.classList.add('is-open'); $('.drawer__panel', drawer).focus({ preventScroll: true }); });
+  }
+  function closeDrawer() {
+    if (drawer.hidden) return;
+    drawer.classList.remove('is-open'); document.documentElement.style.overflow = '';
+    setTimeout(() => { drawer.hidden = true; }, reduce ? 0 : 280);
+    if (drawerBack && drawerBack.focus) drawerBack.focus({ preventScroll: true });
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
   function goCart() {
     if ($('#main').hidden) { location.hash = 'zamovlennia'; return; }
     const el = $('#zamovlennia'); el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
     setTimeout(() => $('#koshyk').focus({ preventScroll: true }), reduce ? 0 : 500);
   }
 
-  /* ---------- delivery & Nova Poshta ---------- */
+  /* ---------- доставка: Нова Пошта (місто → відділення / поштомат / вулиця) та Укрпошта (місто → відділення з індексом) ---------- */
   const form = $('#order-form');
-  const fCity = $('#f-city'), fBranch = $('#f-branch'), cityList = $('#city-list'), branchList = $('#branch-list');
-  let cityRef = '', branchOk = false, npDown = false;
+  const fCity = $('#f-city'), fBranch = $('#f-branch'), fStreet = $('#f-street'), fZip = $('#f-zip');
+  const cityList = $('#city-list'), branchList = $('#branch-list'), streetList = $('#street-list'), zipList = $('#zip-list');
+  const upResult = $('[data-up-result]');
+  let city = null, branchOk = false, npDown = false, upDown = false, upOffice = null;
   const delivery = () => form.delivery.value;
+  const isNP = () => delivery().startsWith('np');
+
+  /* прев'ю в Claude не має сервера — показуємо роботу на прикладах, щоб усе можна було «поклацати» */
+  const DEMO = {
+    cities: [['Київ', 'Київська'], ['Львів', 'Львівська'], ['Одеса', 'Одеська'], ['Дніпро', 'Дніпропетровська'], ['Харків', 'Харківська'], ['Кривий Ріг', 'Дніпропетровська'], ['Вінниця', 'Вінницька'], ['Бровари', 'Київська']],
+    np: n => [1, 2, 5, 12, 25, 41, 103].map(i => `Відділення №${i} (до 30 кг): ${n}, вул. ${['Шевченка', 'Соборна', 'Незалежності', 'Миру', 'Лесі Українки', 'Грушевського', 'Садова'][i % 7]}, ${i * 3 % 90 + 1}`),
+    locker: n => [5012, 5340, 7781, 8120].map(i => `Поштомат №${i}: ${n}, вул. ${['Центральна', 'Перемоги', 'Шевченка', 'Київська'][i % 4]}, ${i % 70 + 2} (у супермаркеті)`),
+    streets: ['вул. Шевченка', 'вул. Шевченківська', 'просп. Незалежності', 'вул. Соборна', 'вул. Лесі Українки', 'бульв. Шевченка', 'вул. Садова'],
+    up: n => { const pre = { 'Київ': '01', 'Львів': '79', 'Одеса': '65', 'Дніпро': '49', 'Харків': '61', 'Кривий Ріг': '50', 'Вінниця': '21', 'Бровари': '07' }[n] || '01';
+      return [['001', 'вул. Хрещатик, 22'], ['004', 'вул. Шевченка, 11'], ['017', 'просп. Перемоги, 40'], ['033', 'вул. Садова, 5']].map(([x, a]) => ({ index: pre + x, name: `Відділення ${n}`, address: `${n}, ${a}` })); }
+  };
+
+  async function api(path, body) {
+    const r = await fetch(CONFIG.apiBase + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!r.ok) throw new Error(path + ' ' + r.status);
+    const j = await r.json(); if (!j.ok) throw new Error(j.error || path); return j.data;
+  }
+  /* Довідник Нової Пошти — відкритий: питаємо його напряму з браузера (ключ не потрібен).
+     Якщо раптом недоступний — пробуємо через наш сервер, а в прев'ю показуємо приклади. */
+  let npDemo = false;
+  async function npCall(method, props) {
+    if (!npDemo) {
+      try {
+        const r = await fetch('https://api.novaposhta.ua/v2.0/json/', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ apiKey: '', modelName: 'Address', calledMethod: method, methodProperties: props }) });
+        const j = await r.json(); if (j.success) return j.data;
+        throw new Error((j.errors || []).join('; ') || 'np');
+      } catch (err) {
+        try { return await api('/np', { method, props }); }
+        catch (err2) { if (PREVIEW) npDemo = true; else throw err2; }
+      }
+    }
+    return null; // демо-режим
+  }
+  /* населені пункти — усі, включно із селами (searchSettlements) */
+  async function npCities(q) {
+    const d = await npCall('searchSettlements', { CityName: q, Limit: '20', Page: '1' });
+    if (!d) return DEMO.cities.filter(([n]) => n.toLowerCase().startsWith(q.toLowerCase())).map(([n, a], i) => ({ name: n, area: a, full: `${n}, ${a} обл.`, ref: 'demo-' + i, count: 30 }));
+    return ((d[0] && d[0].Addresses) || []).map(c => ({ name: c.MainDescription, area: c.Area, full: c.Present, ref: c.Ref, count: +c.Warehouses || 0 }));
+  }
+  /* відділення / поштомати: шукаємо по всій базі НП за номером чи вулицею, показуємо найближчі збіги */
+  const T_BRANCH = ['841339c7-591a-42e2-8233-7a0a00f0ed6f', '9a68df70-0267-42a8-bb5c-37f427e36ee4'], T_LOCKER = ['f9316480-5f2d-425d-bc2c-ac7cd29decf0'];
+  let whTotal = 0;
+  async function npWarehouses(q) {
+    const locker = delivery() === 'np-locker';
+    if (String(city.ref).startsWith('demo-')) { const l = (locker ? DEMO.locker : DEMO.np)(city.name).filter(x => x.toLowerCase().includes(q.toLowerCase())); whTotal = l.length; return l.map(x => ({ label: x })); }
+    const num = /^\d+$/.test(q) ? q : '';
+    const res = await Promise.all((locker ? T_LOCKER : T_BRANCH).map(t => fetchWh(t, q)));
+    whTotal = res.reduce((a, r) => a + r.total, 0);
+    const all = [].concat(...res.map(r => r.data));
+    all.sort((a, b) => (num ? (b.Number === num) - (a.Number === num) : 0) || (+a.Number || 0) - (+b.Number || 0));
+    return all.slice(0, 100).map(w => ({ label: w.Description }));
+  }
+  async function fetchWh(type, q) {
+    const props = { SettlementRef: city.ref, TypeOfWarehouseRef: type, Limit: '100', Page: '1' };
+    if (q) props.FindByString = q;
+    const r = await fetch('https://api.novaposhta.ua/v2.0/json/', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ apiKey: '', modelName: 'Address', calledMethod: 'getWarehouses', methodProperties: props }) }).then(r => r.json()).catch(() => null);
+    if (r && r.success) return { data: r.data, total: (r.info && +r.info.totalCount) || r.data.length };
+    const d = await api('/np', { method: 'getWarehouses', props }); return { data: d, total: d.length };
+  }
+  async function npStreets(q) {
+    if (String(city.ref).startsWith('demo-')) return DEMO.streets.filter(x => x.toLowerCase().includes(q.toLowerCase())).map(x => ({ label: x }));
+    const d = await npCall('searchSettlementStreets', { StreetName: q, SettlementRef: city.ref, Limit: '20' }) || [];
+    return ((d[0] && d[0].Addresses) || []).map(s => ({ label: s.Present }));
+  }
+  async function upOffices(by) { // by: { city } або { index }
+    if (PREVIEW) { const list = DEMO.up(by.city || 'Київ'); return by.index ? list.filter(o => o.index === by.index).concat(by.index.length === 5 && !list.some(o => o.index === by.index) ? [{ index: by.index, name: 'Відділення', address: `${by.index}, приклад адреси` }] : []) : list; }
+    return api('/up', by);
+  }
+
   function syncDelivery() {
-    const d = delivery(), isNP = d.startsWith('np'), branchy = d === 'np-branch' || d === 'np-locker';
+    const d = delivery(), branchy = d === 'np-branch' || d === 'np-locker';
     $('[data-branch-field]').hidden = !branchy;
-    $('[data-address-field]').hidden = branchy;
+    $('[data-address-field]').hidden = d !== 'np-courier';
     $('[data-zip-field]').hidden = d !== 'ukrposhta';
     $('label[for="f-branch"]').firstChild.textContent = d === 'np-locker' ? 'Поштомат ' : 'Відділення ';
-    fCity.placeholder = isNP ? 'Почніть вводити: Київ, Львів…' : 'Місто або село';
-    if (!isNP) closeList(cityList, fCity);
+    fBranch.placeholder = d === 'np-locker' ? 'Номер або вулиця поштомата, напр. 5340' : 'Номер або вулиця відділення, напр. 12';
+    [cityList, branchList, streetList, zipList].forEach(ul => ul.hidden = true);
   }
-  $$('input[name="delivery"]').forEach(r => r.addEventListener('change', () => { syncDelivery(); branchOk = false; fBranch.value = ''; }));
+  $$('input[name="delivery"]').forEach(r => r.addEventListener('change', () => {
+    syncDelivery(); branchOk = false; fBranch.value = ''; fStreet.value = ''; fZip.value = ''; upOffice = null; upResult.hidden = true;
+  }));
 
-  async function np(method, props) {
-    const r = await fetch(CONFIG.apiBase + '/np', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method, props }) });
-    if (!r.ok) throw new Error('np ' + r.status);
-    const j = await r.json(); if (!j.ok) throw new Error(j.error || 'np'); return j.data;
-  }
   const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
-  function openList(ul, input, items, onPick) {
-    ul.innerHTML = items.length ? items.map((it, i) => `<li role="option" id="${ul.id}-${i}" data-i="${i}">${esc(it.label)}</li>`).join('') : '<li class="empty">Нічого не знайдено</li>';
+  function openList(ul, input, items, onPick, render = it => esc(it.label), note = '') {
+    ul.innerHTML = (items.length ? items.map((it, i) => `<li role="option" id="${ul.id}-${i}" data-i="${i}">${render(it)}</li>`).join('') : '<li class="empty">Нічого не знайдено. Перевірте написання.</li>') + (note ? `<li class="empty note">${note}</li>` : '');
     ul.hidden = false; input.setAttribute('aria-expanded', 'true');
     ul.onmousedown = e => { const li = e.target.closest('li[data-i]'); if (li) { e.preventDefault(); onPick(items[+li.dataset.i]); closeList(ul, input); } };
     input._items = items; input._pick = onPick; input._active = -1;
@@ -1265,41 +2017,91 @@ const FAQ = [
       } else if (e.key === 'Enter' && input._active >= 0) { e.preventDefault(); input._pick(input._items[input._active]); closeList(ul, input); }
       else if (e.key === 'Escape') closeList(ul, input);
     });
-    input.addEventListener('blur', () => setTimeout(() => closeList(ul, input), 120));
+    input.addEventListener('blur', () => setTimeout(() => closeList(ul, input), 150));
   }
-  keyNav(fCity, cityList); keyNav(fBranch, branchList);
+  keyNav(fCity, cityList); keyNav(fBranch, branchList); keyNav(fStreet, streetList); keyNav(fZip, zipList);
 
+  /* місто — один пошук для обох перевізників (довідник населених пунктів Нової Пошти) */
   const searchCity = debounce(async q => {
-    if (!delivery().startsWith('np') || npDown || q.length < 2) { closeList(cityList, fCity); return; }
-    try {
-      const data = await np('getCities', { FindByString: q, Limit: 20 });
-      openList(cityList, fCity, data.map(c => ({ label: `${c.Description}${c.AreaDescription ? ', ' + c.AreaDescription + ' обл.' : ''}`, ref: c.Ref, name: c.Description })), pickCity);
-    } catch (err) { npFallback(); }
+    if (npDown || q.length < 2) { closeList(cityList, fCity); return; }
+    try { openList(cityList, fCity, await npCities(q), pickCity, c => `<b>${esc(c.full.split(',')[0])}</b> <span>${esc(c.full.split(',').slice(1).join(',').trim())}${c.count ? '' : ' · без відділень, лише кур’єр'}</span>`); }
+    catch (err) { manualMode(); }
   }, 250);
   function pickCity(c) {
-    fCity.value = c.name; cityRef = c.ref; branchOk = false;
-    fBranch.disabled = false; fBranch.value = ''; fBranch.placeholder = 'Номер або адреса відділення'; fBranch.focus();
-    loadBranches('');
+    city = c; fCity.value = c.full || c.name; branchOk = false;
+    fBranch.value = ''; fStreet.value = ''; syncDelivery();
+    const d = delivery();
+    if (d === 'np-branch' || d === 'np-locker') { fBranch.focus(); loadBranches(''); }
+    else if (d === 'np-courier') fStreet.focus();
+    else { fZip.focus(); loadUp(); }
   }
-  function npFallback() {
+  function manualMode() { // API недоступне — даємо вписати все вручну, замовлення не зупиняється
     npDown = true; closeList(cityList, fCity);
-    fBranch.disabled = false; fBranch.placeholder = 'Номер відділення, напр. 12'; $('[data-np-hint]').hidden = false;
+    fBranch.placeholder = 'Номер відділення, напр. 12'; fStreet.placeholder = 'Назва вулиці';
+    $('[data-np-hint]').hidden = false;
   }
-  fCity.addEventListener('input', () => { cityRef = ''; branchOk = false; if (!npDown) { fBranch.disabled = true; fBranch.value = ''; fBranch.placeholder = 'Спершу оберіть місто'; } searchCity(fCity.value.trim()); });
-
-  const loadBranches = debounce(async q => {
-    if (!cityRef || npDown) return;
+  fCity.addEventListener('input', () => {
+    city = null; branchOk = false; upOffice = null; upResult.hidden = true;
+    if (!npDown) { fBranch.value = ''; fStreet.value = ''; }
+    searchCity(fCity.value.trim());
+  });
+  /* якщо клієнт вписав місто, але не клацнув його у списку — підбираємо саме, щоб відділення одразу шукались */
+  async function ensureCity() {
+    if (city || npDown) return !!city;
+    const q = fCity.value.split(',')[0].replace(/^(м|с|смт|сел)\.\s*/i, '').trim();
+    if (q.length < 2) { fCity.classList.add('is-error'); fCity.focus(); return false; }
     try {
-      const props = { CityRef: cityRef, Limit: 50 };
-      if (q) props.FindByString = q;
-      if (delivery() === 'np-locker') props.TypeOfWarehouseRef = 'f9316480-5f2d-425d-bc2c-ac7cd29decf0';
-      const data = await np('getWarehouses', props);
-      openList(branchList, fBranch, data.map(w => ({ label: w.Description, ref: w.Ref })), w => { fBranch.value = w.label; branchOk = true; });
+      const list = await npCities(q);
+      const c = list.find(x => x.name.toLowerCase() === q.toLowerCase()) || list[0];
+      if (c) { city = c; fCity.value = c.full || c.name; closeList(cityList, fCity); return true; }
+    } catch (err) { manualMode(); }
+    return false;
+  }
+
+  /* Нова Пошта: відділення та поштомати */
+  const loadBranches = debounce(async q => {
+    if (npDown || !(await ensureCity())) return;
+    try {
+      const items = await npWarehouses(q), word = delivery() === 'np-locker' ? 'поштоматів' : 'відділень';
+      const note = whTotal > items.length ? `Показано ${items.length} з ${whTotal} ${word} у цьому місті. Введіть номер або вулицю, щоб знайти потрібне.` : '';
+      openList(branchList, fBranch, items, w => { fBranch.value = w.label; branchOk = true; }, undefined, note);
       $('[data-np-hint]').hidden = false;
-    } catch (err) { npFallback(); }
+    }
+    catch (err) { manualMode(); }
   }, 250);
   fBranch.addEventListener('input', () => { branchOk = false; loadBranches(fBranch.value.trim()); });
-  fBranch.addEventListener('focus', () => { if (cityRef && !fBranch.value) loadBranches(''); });
+  fBranch.addEventListener('focus', () => { if (!fBranch.value && (city || fCity.value.trim())) loadBranches(''); });
+
+  /* Нова Пошта: кур'єр — пошук вулиці */
+  const loadStreets = debounce(async q => {
+    if (npDown || q.length < 2 || !(await ensureCity())) { closeList(streetList, fStreet); return; }
+    try { openList(streetList, fStreet, await npStreets(q.replace(/^(вул\.?|вулиця|просп\.?|проспект|бульв\.?|пров\.?)\s*/i, '')), st => { fStreet.value = st.label; $('#f-house').focus(); }); }
+    catch (err) { closeList(streetList, fStreet); }
+  }, 250);
+  fStreet.addEventListener('input', () => loadStreets(fStreet.value.trim()));
+
+  /* Укрпошта: відділення міста або перевірка індексу */
+  function showUp(o) {
+    upOffice = o; fZip.value = o.index;
+    upResult.className = 'upcheck'; upResult.textContent = `✓ ${o.index} · ${o.address}`; upResult.hidden = false;
+  }
+  const loadUp = debounce(async () => {
+    if (upDown || !(await ensureCity())) return;
+    try { openList(zipList, fZip, await upOffices({ city: city.name, area: city.area || '' }), showUp, o => `<b>${esc(o.index)}</b> ${esc(o.address)}`); }
+    catch (err) { upDown = true; closeList(zipList, fZip); }
+  }, 200);
+  const checkZip = debounce(async z => {
+    if (!/^\d{5}$/.test(z)) { upResult.hidden = true; return; }
+    if (upDown) return;
+    try {
+      const list = await upOffices({ index: z });
+      if (list.length) showUp(list[0]);
+      else { upOffice = null; upResult.className = 'upcheck is-bad'; upResult.textContent = 'Відділення з таким індексом не знайдено. Перевірте цифри.'; upResult.hidden = false; }
+    } catch (err) { upDown = true; upResult.hidden = true; }
+  }, 300);
+  fZip.addEventListener('input', () => { fZip.value = fZip.value.replace(/\D/g, '').slice(0, 5); upOffice = null; checkZip(fZip.value); });
+  fZip.addEventListener('focus', () => { if (!fZip.value && (city || fCity.value.trim())) loadUp(); });
+  syncDelivery();
 
   /* ---------- submit & payment ---------- */
   const errBox = $('[data-form-error]');
@@ -1316,11 +2118,12 @@ const FAQ = [
     if (!form.city.value.trim()) return fail('Вкажіть місто доставки.', form.city);
     const d = delivery();
     if ((d === 'np-branch' || d === 'np-locker') && !form.branch.value.trim()) return fail('Оберіть відділення або поштомат.', form.branch);
-    if ((d === 'np-courier' || d === 'ukrposhta') && !form.address.value.trim()) return fail('Вкажіть адресу доставки.', form.address);
-    if (d === 'ukrposhta' && !/^\d{5}$/.test(form.zip.value.trim())) return fail('Вкажіть поштовий індекс із 5 цифр.', form.zip);
+    if (d === 'np-courier' && !form.street.value.trim()) return fail('Вкажіть вулицю для кур’єра.', form.street);
+    if (d === 'np-courier' && !form.house.value.trim()) return fail('Вкажіть номер будинку.', form.house);
+    if (d === 'ukrposhta' && !/^\d{5}$/.test(form.zip.value.trim())) return fail('Оберіть відділення Укрпошти або впишіть індекс із 5 цифр.', form.zip);
     return true;
   }
-  const DLABEL = { 'np-branch': 'Відділення Нової Пошти', 'np-locker': 'Поштомат Нової Пошти', 'np-courier': 'Кур’єр Нової Пошти', 'ukrposhta': 'Укрпошта' };
+  const DLABEL = { 'np-branch': 'Відділення Нової Пошти', 'np-locker': 'Поштомат Нової Пошти', 'np-courier': 'Кур’єр Нової Пошти', 'ukrposhta': 'Відділення Укрпошти' };
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
@@ -1328,13 +2131,15 @@ const FAQ = [
     const btn = $('[data-submit]'); btn.disabled = true; $('[data-submit-label]').textContent = 'Готуємо оплату…';
     const t = totals();
     const orderId = 'DS-' + Date.now().toString(36).toUpperCase().slice(-6) + Math.random().toString(36).slice(2, 4).toUpperCase();
-    const items = Object.entries(cart).map(([k, n]) => ({ id: k, qty: n }));
+    const items = Object.entries(cart).map(([k, n]) => { const it = parseKey(k); return { id: it.color, size: it.size, qty: n }; });
     const order = {
       order_id: orderId,
-      items: items.map(i => `${COLORS[i.id].name} × ${i.qty}`).join(', '),
+      items: items.map(i => `${COLORS[i.id].name}, ${SIZE[i.size].name} ${SIZE[i.size].dims} × ${i.qty}`).join('; '),
       total: t.total, name: form.name.value.trim(), phone: form.phone.value.trim(), email: form.email.value.trim(),
-      delivery: DLABEL[delivery()], city: form.city.value.trim(), branch: form.branch.value.trim(),
-      address: form.address.value.trim(), zip: form.zip.value.trim(),
+      delivery: DLABEL[delivery()], city: form.city.value.trim(),
+      branch: delivery().startsWith('np-') && delivery() !== 'np-courier' ? form.branch.value.trim() : (delivery() === 'ukrposhta' && upOffice ? upOffice.address : ''),
+      address: delivery() === 'np-courier' ? [form.street.value.trim(), 'буд. ' + form.house.value.trim(), form.flat.value.trim() && 'кв. ' + form.flat.value.trim(), form.floor.value.trim() && 'поверх ' + form.floor.value.trim()].filter(Boolean).join(', ') : '',
+      zip: delivery() === 'ukrposhta' ? form.zip.value.trim() : '',
       payment: form.payment.value === 'monopay' ? 'MonoPay' : 'LiqPay', comment: form.comment.value.trim()
     };
 

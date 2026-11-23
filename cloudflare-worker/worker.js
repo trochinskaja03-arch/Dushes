@@ -6,8 +6,9 @@
  *   POST /pay-liqpay      — надсилає замовлення в Telegram і готує платіж LiqPay
  *   POST /mono-webhook    — monobank повідомляє статус оплати (підпис перевіряється)
  *   POST /liqpay-callback — LiqPay повідомляє статус оплати (підпис перевіряється)
- *   POST /np              — підказки міст і відділень Нової Пошти
- *   POST /lead            — «Нагадайте мені» з блоку акції → Telegram
+ *   POST /np              — підказки міст, відділень, поштоматів і вулиць Нової Пошти
+ *   POST /up              — відділення Укрпошти за містом або за індексом
+ *   POST /lead            — «Допоможіть мені обрати» з блоку акції та консультації щодо розміру → Telegram
  *
  * Змінні (Cloudflare → Workers → ваш worker → Settings → Variables and Secrets):
  *   SITE_URL            адреса сайту, напр. https://imya.github.io/dushes   (обов'язково)
@@ -18,14 +19,20 @@
  *   LIQPAY_PRIVATE_KEY  приватний ключ LiqPay                              (секрет)
  *   LIQPAY_SANDBOX      1 — тестовий режим LiqPay (видалити перед запуском)
  *   NP_API_KEY          ключ API Нової Пошти                               (секрет)
- *   PRICE_UAH           ціна за ковдру, якщо хочете змінювати без правки коду
+ *   UP_TOKEN            Bearer-токен Укрпошти (адресний класифікатор)      (секрет; без нього індекс вписують вручну)
  */
 
 /* ---------- Ціна й знижки: тримайте однаковими з CONFIG в index.html ---------- */
-const DEFAULT_PRICE = 2699; // ціна за ковдру, ₴
+// Ціни задаються в SIZES нижче (окремо для кожного розміру).
 const DISCOUNTS = [];       // знижки за кількістю, напр. [{ min: 2, rate: 0.05 }] (зараз немає)
 const PROMO_UNTIL = '2026-12-31T23:59:59+02:00'; // безкоштовна доставка на честь запуску
 const COLORS = { violet: 'Фіолетова', white: 'Біла', grey: 'Сіра', rose: 'Темно-рожева' };
+// Розміри й ціни: мають збігатися з CONFIG.sizes в index.html. Сервер рахує суму сам і не довіряє цінам із браузера.
+const SIZES = {
+  p: { name: 'Полуторна',  dims: '140×205 / 150×210', price: 2699 },
+  d: { name: 'Двоспальна', dims: '175×205 / 180×210', price: 2699 },
+  e: { name: 'Євро',       dims: '200×220', price: 2699 }
+};
 
 /* ---------- helpers ---------- */
 const enc = new TextEncoder();
@@ -50,17 +57,17 @@ const json = (status, body, headers = {}) => new Response(JSON.stringify(body), 
 });
 
 function calcOrder(items, env) {
-  const price = Number(env.PRICE_UAH || DEFAULT_PRICE);
-  if (!Array.isArray(items) || !items.length || items.length > 10) throw new Error('Кошик порожній');
+  if (!Array.isArray(items) || !items.length || items.length > 12) throw new Error('Кошик порожній');
   const lines = [];
   for (const it of items) {
     const name = COLORS[it && it.id];
+    const size = SIZES[it && it.size];
     const qty = Math.floor(Number(it && it.qty));
-    if (!name || !(qty >= 1 && qty <= 20)) throw new Error('Невірний товар у кошику');
-    lines.push({ name: `Ковдра Дюшес, ${name.toLowerCase()}`, short: name, qty });
+    if (!name || !size || !(qty >= 1 && qty <= 100)) throw new Error('Невірний товар у кошику');
+    lines.push({ name: `Ковдра Дюшес, ${name.toLowerCase()}, ${size.name.toLowerCase()} ${size.dims}`, short: `${name}, ${size.name} ${size.dims}`, qty, price: size.price });
   }
   const qty = lines.reduce((a, l) => a + l.qty, 0);
-  const sum = qty * price;
+  const sum = lines.reduce((a, l) => a + l.qty * l.price, 0);
   const tier = DISCOUNTS.find(d => qty >= d.min);
   const discount = tier ? Math.round(sum * tier.rate) : 0;
   return { lines, qty, sum, discount, total: sum - discount, description: lines.map(l => `${l.name} × ${l.qty}`).join('; ') };
@@ -223,14 +230,57 @@ async function lead(request, env, h) {
   let b; try { b = await request.json(); } catch (e) { return json(400, { ok: false }, h); }
   const phone = String(b.phone || '').replace(/[^\d+]/g, '');
   if (!/^(\+?38)?0\d{9}$/.test(phone)) return json(400, { ok: false, error: 'Невірний номер' }, h);
-  const sent = await telegram(env, `🎁 Нагадати про безкоштовну доставку\n👤 ${clip(b.name, 60) || 'без імені'}\n📞 ${clip(b.phone, 30)}\nНагадати до 28 грудня`);
+  let text;
+  if (b.topic === 'size') {
+    const color = COLORS[b.color], size = SIZES[b.size];
+    text = `📏 Консультація щодо розміру\n👤 ${clip(b.name, 60) || 'без імені'}\n📞 ${clip(b.phone, 30)}`
+      + (color ? `\n🎨 Дивився: ${color}${size ? `, ${size.name} ${size.dims}` : ''}` : '')
+      + (b.comment ? `\n💬 ${clip(b.comment, 500)}` : '');
+  } else {
+    text = `🛏 Допомогти обрати ковдру\n👤 ${clip(b.name, 60) || 'без імені'}\n📞 ${clip(b.phone, 30)}`;
+  }
+  const sent = await telegram(env, text);
   return sent ? json(200, { ok: true }, h) : json(502, { ok: false, error: 'Telegram недоступний' }, h);
 }
 
 const NP_ALLOWED = {
   getCities: ['FindByString', 'Limit', 'Page'],
-  getWarehouses: ['CityRef', 'FindByString', 'Limit', 'Page', 'TypeOfWarehouseRef']
+  searchSettlements: ['CityName', 'Limit', 'Page'],
+  searchSettlementStreets: ['StreetName', 'SettlementRef', 'Limit'],
+  getWarehouses: ['CityRef', 'SettlementRef', 'FindByString', 'Limit', 'Page', 'TypeOfWarehouseRef'],
+  getStreet: ['CityRef', 'FindByString', 'Limit', 'Page']
 };
+
+/* ---------- Укрпошта: відділення за містом або за індексом (адресний класифікатор, потрібен UP_TOKEN) ---------- */
+const UP_BASE = 'https://www.ukrposhta.ua/address-classifier-ws/';
+async function upGet(env, path) {
+  const r = await fetch(UP_BASE + path, { headers: { Authorization: 'Bearer ' + env.UP_TOKEN, Accept: 'application/json' } });
+  if (!r.ok) throw new Error('ukrposhta ' + r.status);
+  const j = await r.json().catch(() => ({}));
+  const e = j && j.Entries && j.Entries.Entry; return Array.isArray(e) ? e : e ? [e] : [];
+}
+const upOffice = o => ({ index: String(o.POSTCODE || o.POSTINDEX || ''), name: o.POSTOFFICE_UA || o.PO_LONG || '',
+  address: [o.CITY_UA || o.CITY_UA_VPZ, o.STREET_UA_VPZ || o.STREET_UA, o.HOUSENUMBER].filter(Boolean).join(', ') || o.POSTOFFICE_UA || '' });
+async function ukrposhta(request, env, h) {
+  if (!env.UP_TOKEN) return json(503, { ok: false, error: 'Укрпошту ще не налаштовано' }, h);
+  let b; try { b = await request.json(); } catch (e) { return json(400, { ok: false }, h); }
+  try {
+    if (b.index) {
+      if (!/^\d{5}$/.test(String(b.index))) return json(400, { ok: false, error: 'Невірний індекс' }, h);
+      const list = await upGet(env, 'get_postoffices_by_postindex?pi=' + b.index);
+      return json(200, { ok: true, data: list.filter(o => String(o.LOCK_CODE || '0') === '0').map(upOffice) }, h);
+    }
+    const city = String(b.city || '').trim().slice(0, 60), area = String(b.area || '').trim().slice(0, 60);
+    if (city.length < 2) return json(400, { ok: false, error: 'Місто?' }, h);
+    let regionId = '';
+    if (area) { const reg = await upGet(env, 'get_regions_by_region_ua?region_name=' + encodeURIComponent(area)); if (reg[0]) regionId = reg[0].REGION_ID; }
+    const cities = await upGet(env, 'get_city_by_region_id_and_district_id_and_city_ua?' + (regionId ? 'region_id=' + regionId + '&' : '') + 'city_ua=' + encodeURIComponent(city));
+    const c = cities.find(x => (x.CITY_UA || '').toLowerCase() === city.toLowerCase()) || cities[0];
+    if (!c) return json(200, { ok: true, data: [] }, h);
+    const offices = await upGet(env, 'get_postoffices_by_postcode_cityid_cityvpzid?city_id=' + c.CITY_ID);
+    return json(200, { ok: true, data: offices.filter(o => String(o.LOCK_CODE || '0') === '0').map(upOffice).sort((a, b) => a.index.localeCompare(b.index)).slice(0, 80) }, h);
+  } catch (err) { console.error('up', err.message); return json(502, { ok: false, error: 'Укрпошта недоступна' }, h); }
+}
 async function novaPoshta(request, env, h) {
   let req; try { req = await request.json(); } catch (e) { return json(400, { ok: false }, h); }
   const allowed = NP_ALLOWED[req.method];
@@ -261,6 +311,7 @@ export default {
         case '/pay-mono': return await payMono(request, env, h);
         case '/pay-liqpay': return await payLiqpay(request, env, h);
         case '/np': return await novaPoshta(request, env, h);
+        case '/up': return await ukrposhta(request, env, h);
         case '/lead': return await lead(request, env, h);
         case '/mono-webhook': return await monoWebhook(request, env);
         case '/liqpay-callback': return await liqpayCallback(request, env);
