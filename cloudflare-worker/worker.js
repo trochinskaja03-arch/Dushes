@@ -4,6 +4,7 @@
  * Що робить:
  *   POST /pay-mono        — надсилає замовлення в Telegram і створює рахунок monopay
  *   POST /pay-liqpay      — надсилає замовлення в Telegram і готує платіж LiqPay
+ *   POST /order-cod       — замовлення з післяплатою → Telegram
  *   POST /mono-webhook    — monobank повідомляє статус оплати (підпис перевіряється)
  *   POST /liqpay-callback — LiqPay повідомляє статус оплати (підпис перевіряється)
  *   POST /np              — підказки міст, відділень, поштоматів і вулиць Нової Пошти
@@ -176,6 +177,13 @@ async function payMono(request, env, h) {
   return json(200, { ok: true, saved, pageUrl: j.pageUrl, amount: calc.total }, h);
 }
 
+/* Післяплата: лише надсилаємо замовлення менеджеру в Telegram */
+async function orderCod(request, env, h) {
+  const { body, calc, o } = await readOrder(request, env);
+  const sent = await telegram(env, orderMessage(body.orderId, calc, o, 'Післяплата').replace('· очікує оплати', '· оплата при отриманні'));
+  return sent ? json(200, { ok: true, amount: calc.total }, h) : json(502, { ok: false, error: 'Telegram недоступний' }, h);
+}
+
 async function payLiqpay(request, env, h) {
   if (!env.LIQPAY_PUBLIC_KEY || !env.LIQPAY_PRIVATE_KEY) return json(503, { ok: false, error: 'LiqPay ще не налаштовано' }, h);
   const { body, calc, o } = await readOrder(request, env);
@@ -228,6 +236,13 @@ async function monoWebhook(request, env) {
 
 async function lead(request, env, h) {
   let b; try { b = await request.json(); } catch (e) { return json(400, { ok: false }, h); }
+  if (b.topic === 'b2b') { // заявка на комерційну пропозицію (сторінка «Співпраця»)
+    const c = String(b.contact || '').trim(), d = c.replace(/[^\d+]/g, '');
+    if (!/^(\+?38)?0\d{9}$/.test(d) && !/^@?[A-Za-z0-9_]{4,32}$/.test(c)) return json(400, { ok: false, error: 'Невірний контакт' }, h);
+    const msg = `🤝 Співпраця: заявка на комерційну пропозицію\n👤 ${clip(b.name, 60)}\n📞 ${clip(c, 40)}\n🏢 ${clip(b.business, 60)}`
+      + (b.qty ? `\n📦 Кількість: ${clip(b.qty, 20)}` : '') + (b.comment ? `\n💬 ${clip(b.comment, 500)}` : '');
+    return (await telegram(env, msg)) ? json(200, { ok: true }, h) : json(502, { ok: false, error: 'Telegram недоступний' }, h);
+  }
   const phone = String(b.phone || '').replace(/[^\d+]/g, '');
   if (!/^(\+?38)?0\d{9}$/.test(phone)) return json(400, { ok: false, error: 'Невірний номер' }, h);
   let text;
@@ -310,6 +325,7 @@ export default {
       switch (pathname) {
         case '/pay-mono': return await payMono(request, env, h);
         case '/pay-liqpay': return await payLiqpay(request, env, h);
+        case '/order-cod': return await orderCod(request, env, h);
         case '/np': return await novaPoshta(request, env, h);
         case '/up': return await ukrposhta(request, env, h);
         case '/lead': return await lead(request, env, h);
